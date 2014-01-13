@@ -21,12 +21,17 @@
     <Content Include="Content\loader.png" />
     <Content Include="Content\mainmenu.jpg" />
     <Content Include="Content\MegamanX.png" />
+    <Content Include="Content\MegaManX_ALL.png" />
+    <Content Include="Content\megamanx_base.png" />
+    <Content Include="Content\megamanx_base.xml" />
     <Content Include="default.htm" />
     <TypeScriptCompile Include="SourceFiles\Game.ts" />
     <TypeScriptCompile Include="ThirdParty\phaser.d.ts" />
     <TypeScriptCompile Include="SourceFiles\Boot.ts" />
     <TypeScriptCompile Include="SourceFiles\Preloader.ts" />
     <TypeScriptCompile Include="SourceFiles\MainMenu.ts" />
+    <TypeScriptCompile Include="SourceFiles\Player.ts" />
+    <TypeScriptCompile Include="SourceFiles\TestLevel.ts" />
     <Content Include="ThirdParty\phaser.js" />
     <Content Include="ThirdParty\phaser.min.js" />
     <Content Include="web.config" />

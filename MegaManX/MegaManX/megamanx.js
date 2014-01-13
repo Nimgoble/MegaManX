@@ -9,11 +9,13 @@ var MegaManX;
     var Game = (function (_super) {
         __extends(Game, _super);
         function Game() {
-            _super.call(this, 800, 600, Phaser.AUTO, 'content', null);
+            //TODO: Change to Phaser.AUTO
+            _super.call(this, 800, 600, Phaser.CANVAS, 'content', null);
 
             this.state.add('Boot', MegaManX.Boot, false);
             this.state.add('Preloader', MegaManX.Preloader, false);
             this.state.add('MainMenu', MegaManX.MainMenu, false);
+            this.state.add('TestLevel', MegaManX.TestLevel, false);
 
             //this.state.add('Level1', Level1, false);
             this.state.start('Boot');
@@ -68,6 +70,7 @@ var MegaManX;
             //  Load our actual games assets
             this.load.image('mainmenu', 'Content/mainmenu.jpg');
             this.load.atlasXML('megamanx', 'Content/megamanx_base.png', 'Content/megamanx_base.xml', null);
+            this.load.image('genericTile', 'Content/testTile.png');
             //this.load.spritesheet('button', 'Content/button.png', 185, 52, 3);
             //this.load.image('logo', 'assets/logo.png');
             //this.load.audio('music', 'assets/title.mp3', true);
@@ -81,7 +84,7 @@ var MegaManX;
         };
 
         Preloader.prototype.startMainMenu = function () {
-            this.game.state.start('MainMenu', true, false);
+            this.game.state.start('TestLevel', true, false);
         };
         return Preloader;
     })(Phaser.State);
@@ -104,14 +107,13 @@ var MegaManX;
 
             //this.add.tween(this.logo).to({ y: 220 }, 2000, Phaser.Easing.Elastic.Out, true, 2000);
             this.btnStartGame = this.game.add.button(this.game.world.centerX - 95, 400, 'button', this.actionOnClick, this, 2, 1, 0);
-            this.testSprite = this.game.add.sprite(34, 263, 'megamanx');
-            this.testSprite.animations.add('idle', Phaser.Animation.generateFrameNames('idle', 1, 1, '', 4), 1, true);
-            this.testSprite.animations.add('idleBlink', Phaser.Animation.generateFrameNames('idle', 2, 2, '', 4), 1, true);
-            this.testSprite.animations.play('idle');
 
+            //this.testSprite = this.game.add.sprite(34, 263, 'megamanx');
             //this.input.onDown.addOnce(this.fadeOut, this);
             //this.input.onDown.add(this.keyDown, this);
             this.nextButtonPress = this.game.time.now;
+
+            this.testPlayer = new MegaManX.Player(this.game, 34, 263);
         };
 
         MainMenu.prototype.fadeOut = function () {
@@ -127,11 +129,11 @@ var MegaManX;
         MainMenu.prototype.update = function () {
             if (this.nextButtonPress < this.game.time.now) {
                 if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP) == true) {
-                    this.testSprite.y -= 50;
-                    this.nextButtonPress = this.game.time.now + 0.5;
+                    //this.testSprite.y -= 50;
+                    this.nextButtonPress = this.game.time.now + 1.5;
                 } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN) == true) {
-                    this.testSprite.y += 50;
-                    this.nextButtonPress = this.game.time.now + 0.5;
+                    //this.testSprite.y += 50;
+                    this.nextButtonPress = this.game.time.now + 1.5;
                 }
             }
         };
@@ -142,6 +144,141 @@ var MegaManX;
         return MainMenu;
     })(Phaser.State);
     MegaManX.MainMenu = MainMenu;
+})(MegaManX || (MegaManX = {}));
+var MegaManX;
+(function (MegaManX) {
+    var Player = (function (_super) {
+        __extends(Player, _super);
+        function Player(game, x, y) {
+            _super.call(this, game, x, y, 'megamanx', 0);
+
+            this.animations.add('idle', Phaser.Animation.generateFrameNames('idle', 1, 1, '', 4), 1, true);
+            this.animations.add('idleBlink', Phaser.Animation.generateFrameNames('idle', 2, 2, '', 4), 1, true);
+            this.animations.add('run', Phaser.Animation.generateFrameNames('run', 1, 11, '', 4), 15, true);
+            this.animations.add('shoot', Phaser.Animation.generateFrameNames('shoot', 1, 2, '', 4), 15, true);
+            this.animations.add('jump', Phaser.Animation.generateFrameNames('jump', 1, 7, '', 4), 15, true);
+            this.anchor.setTo(0.5, 0);
+
+            this.body.collideWorldBounds = true;
+            this.body.gravity.x = 0;
+            this.body.gravity.y = 5;
+            this.body.allowGravity = true;
+            this.body.allowCollision.any = true;
+            this.body.setSize(32, 32, 0, 0);
+
+            game.add.existing(this);
+        }
+        Player.prototype.create = function () {
+            this.animations.play('idle');
+            this.currentAnimation = 'idle';
+        };
+
+        Player.prototype.update = function () {
+            this.body.velocity.x = 0;
+
+            //Move left/right
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+                this.body.velocity.x = -150;
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+                this.body.velocity.x = 150;
+            }
+
+            //Jump
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
+                this.body.velocity.y = -150;
+            }
+
+            this.frameVelocityX = this.body.velocity.x;
+            this.frameVelocityY = this.body.velocity.y;
+
+            this.nextAnimation = this.currentAnimation;
+
+            //Display appropriate animation
+            if (this.body.velocity.y !== 0) {
+                //This isn't techically true, but it'll do for now
+                //this.animations.play('jump');
+                this.nextAnimation = 'jump';
+            } else if (this.body.velocity.x !== 0) {
+                if (this.body.velocity.x > 0) {
+                    if (this.scale.x === -1) {
+                        this.scale.x = 1;
+                    }
+
+                    //this.animations.play('run');
+                    this.nextAnimation = 'run';
+                } else if (this.body.velocity.x < 0) {
+                    if (this.scale.x === 1) {
+                        this.scale.x = -1;
+                    }
+
+                    //this.animations.play('run');
+                    this.nextAnimation = 'run';
+                }
+            } else {
+                //this.animations.play('idle');
+                this.nextAnimation = 'idle';
+            }
+
+            if (this.nextAnimation !== this.currentAnimation)
+                this.animations.stop(this.currentAnimation);
+
+            this.animations.play(this.nextAnimation);
+            this.currentAnimation = this.nextAnimation;
+        };
+        return Player;
+    })(Phaser.Sprite);
+    MegaManX.Player = Player;
+})(MegaManX || (MegaManX = {}));
+var MegaManX;
+(function (MegaManX) {
+    var TestLevel = (function (_super) {
+        __extends(TestLevel, _super);
+        function TestLevel() {
+            _super.apply(this, arguments);
+        }
+        TestLevel.prototype.create = function () {
+            this.tiles = this.game.add.group();
+            for (var x = 0; x < 20; x++) {
+                var tile = this.tiles.create((x * 32), 300, 'genericTile');
+                tile.bounds.height = tile.bounds.width = 32;
+                tile.body.immovable = true;
+                tile.body.collideWorldBounds = true;
+                tile.body.allowCollision.any = true;
+                tile.body.collideWorldBounds = true;
+            }
+
+            this.player = new MegaManX.Player(this.game, 34, 263);
+
+            this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN]);
+        };
+
+        TestLevel.prototype.update = function () {
+            this.game.physics.collide(this.player, this.tiles);
+        };
+
+        TestLevel.prototype.render = function () {
+            this.game.debug.renderSpriteBounds(this.player, 'red');
+            this.game.debug.renderSpriteInfo(this.player, 32, 32);
+            this.game.debug.renderSpriteBody(this.player, 'blue');
+            this.game.debug.renderSpriteCollision(this.player, 32, 160);
+
+            //this.game.debug.renderSpriteInputInfo(this.player, 32, 320);
+            this.game.debug.renderText('Current Animation: ' + this.player.currentAnimation, 32, 356);
+            this.game.debug.renderText('Next Animation: ' + this.player.nextAnimation, 32, 372);
+
+            this.game.debug.renderText('Frame Velocity X: ' + this.player.frameVelocityX.toString(), 32, 388);
+            this.game.debug.renderText('Frame Velocity Y: ' + this.player.frameVelocityY.toString(), 32, 404);
+
+            for (var i = 0; i < this.tiles.length; i++) {
+                this.game.debug.renderSpriteBounds(this.tiles.getAt(i), 'purple');
+                //this.game.debug.renderSpriteCollision(this.tiles.getAt(i), 32, 32);
+            }
+
+            this.game.debug.renderQuadTree(this.game.physics.quadTree);
+        };
+        return TestLevel;
+    })(Phaser.State);
+    MegaManX.TestLevel = TestLevel;
 })(MegaManX || (MegaManX = {}));
 window.onload = function () {
     var game = new MegaManX.Game();

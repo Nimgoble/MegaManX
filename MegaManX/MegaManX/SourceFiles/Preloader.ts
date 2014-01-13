@@ -13,6 +13,7 @@ module MegaManX
             //  Load our actual games assets
             this.load.image('mainmenu', 'Content/mainmenu.jpg');
             this.load.atlasXML('megamanx', 'Content/megamanx_base.png', 'Content/megamanx_base.xml', null);
+            this.load.image('genericTile', 'Content/testTile.png');
             //this.load.spritesheet('button', 'Content/button.png', 185, 52, 3);
             //this.load.image('logo', 'assets/logo.png');
             //this.load.audio('music', 'assets/title.mp3', true);
@@ -29,7 +30,7 @@ module MegaManX
 
         startMainMenu()
         {
-            this.game.state.start('MainMenu', true, false);
+            this.game.state.start('TestLevel', true, false);
         }
     }
 } 

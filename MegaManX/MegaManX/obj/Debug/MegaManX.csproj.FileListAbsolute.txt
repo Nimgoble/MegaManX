@@ -3,3 +3,8 @@ E:\Programming\PhaserIO\MegaManX\MegaManX\bin\MegaManX.pdb
 E:\Programming\PhaserIO\MegaManX\MegaManX\obj\Debug\MegaManX.dll
 E:\Programming\PhaserIO\MegaManX\MegaManX\obj\Debug\MegaManX.pdb
 E:\Programming\PhaserIO\MegaManX\MegaManX\obj\Debug\MegaManX.csprojResolveAssemblyReference.cache
+C:\Source code\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.dll
+C:\Source code\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.pdb
+C:\Source code\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.csprojResolveAssemblyReference.cache
+C:\Source code\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.dll
+C:\Source code\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.pdb
