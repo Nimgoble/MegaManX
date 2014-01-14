@@ -157,14 +157,19 @@ var MegaManX;
             this.animations.add('run', Phaser.Animation.generateFrameNames('run', 1, 11, '', 4), 15, true);
             this.animations.add('shoot', Phaser.Animation.generateFrameNames('shoot', 1, 2, '', 4), 15, true);
             this.animations.add('jump', Phaser.Animation.generateFrameNames('jump', 1, 7, '', 4), 15, true);
-            this.anchor.setTo(0.5, 0);
+            this.anchor.setTo(0.5, 0.5);
 
             this.body.collideWorldBounds = true;
-            this.body.gravity.x = 0;
+
+            //this.body.gravity.x = 0;
             this.body.gravity.y = 5;
             this.body.allowGravity = true;
             this.body.allowCollision.any = true;
             this.body.setSize(32, 32, 0, 0);
+            this.body.bounce.setTo(0, 0);
+
+            this.canJump = true;
+            this.onGround = false;
 
             game.add.existing(this);
         }
@@ -184,13 +189,26 @@ var MegaManX;
             }
 
             //Jump
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.canJump) {
+                this.body.y -= 1;
                 this.body.velocity.y = -150;
+                this.canJump = false;
             }
 
             this.frameVelocityX = this.body.velocity.x;
             this.frameVelocityY = this.body.velocity.y;
+        };
 
+        Player.prototype.collisionCallback = function (obj1, obj2) {
+            if (obj1 === this) {
+                if (obj1.body.touching.down)
+                    this.onGround = true;
+
+                this.canJump = true;
+            }
+        };
+
+        Player.prototype.updateCurrentAnimation = function () {
             this.nextAnimation = this.currentAnimation;
 
             //Display appropriate animation
@@ -200,23 +218,26 @@ var MegaManX;
                 this.nextAnimation = 'jump';
             } else if (this.body.velocity.x !== 0) {
                 if (this.body.velocity.x > 0) {
-                    if (this.scale.x === -1) {
-                        this.scale.x = 1;
-                    }
-
                     //this.animations.play('run');
                     this.nextAnimation = 'run';
                 } else if (this.body.velocity.x < 0) {
-                    if (this.scale.x === 1) {
-                        this.scale.x = -1;
-                    }
-
                     //this.animations.play('run');
                     this.nextAnimation = 'run';
                 }
             } else {
                 //this.animations.play('idle');
                 this.nextAnimation = 'idle';
+            }
+
+            //Face the player in the correct direction
+            if (this.body.velocity.x > 0) {
+                if (this.scale.x === -1) {
+                    this.scale.x = 1;
+                }
+            } else if (this.body.velocity.x < 0) {
+                if (this.scale.x === 1) {
+                    this.scale.x = -1;
+                }
             }
 
             if (this.nextAnimation !== this.currentAnimation)
@@ -238,13 +259,22 @@ var MegaManX;
         }
         TestLevel.prototype.create = function () {
             this.tiles = this.game.add.group();
+
             for (var x = 0; x < 20; x++) {
                 var tile = this.tiles.create((x * 32), 300, 'genericTile');
                 tile.bounds.height = tile.bounds.width = 32;
                 tile.body.immovable = true;
                 tile.body.collideWorldBounds = true;
-                tile.body.allowCollision.any = true;
+                tile.body.allowCollision.up = true;
+            }
+
+            for (var x = 0; x < 10; x++) {
+                var tile = this.tiles.create(0, 300 - ((x + 1) * 32), 'genericTile');
+                tile.bounds.height = tile.bounds.width = 32;
+                tile.body.immovable = true;
                 tile.body.collideWorldBounds = true;
+                tile.body.allowCollision.right = true;
+                tile.body.rotation = 90;
             }
 
             this.player = new MegaManX.Player(this.game, 34, 263);
@@ -253,13 +283,16 @@ var MegaManX;
         };
 
         TestLevel.prototype.update = function () {
-            this.game.physics.collide(this.player, this.tiles);
+            this.game.physics.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
+
+            this.player.updateCurrentAnimation();
         };
 
         TestLevel.prototype.render = function () {
             this.game.debug.renderSpriteBounds(this.player, 'red');
             this.game.debug.renderSpriteInfo(this.player, 32, 32);
-            this.game.debug.renderSpriteBody(this.player, 'blue');
+
+            //this.game.debug.renderSpriteBody(this.player, 'blue');
             this.game.debug.renderSpriteCollision(this.player, 32, 160);
 
             //this.game.debug.renderSpriteInputInfo(this.player, 32, 320);

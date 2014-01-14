@@ -9,14 +9,25 @@ module MegaManX
         create()
         {
             this.tiles = this.game.add.group();
+            //Floor
             for (var x = 0; x < 20; x++)
             {
                 var tile = this.tiles.create((x * 32), 300, 'genericTile');
                 tile.bounds.height = tile.bounds.width = 32;
                 tile.body.immovable = true;
                 tile.body.collideWorldBounds = true;
-                tile.body.allowCollision.any = true;
+                tile.body.allowCollision.up = true;
+            }
+
+            //Left wall
+            for (var x = 0; x < 10; x++)
+            {
+                var tile = this.tiles.create(0, 300 - ((x + 1) * 32), 'genericTile');
+                tile.bounds.height = tile.bounds.width = 32;
+                tile.body.immovable = true;
                 tile.body.collideWorldBounds = true;
+                tile.body.allowCollision.right = true;
+                tile.body.rotation = 90;
             }
 
             this.player = new MegaManX.Player(this.game, 34, 263);
@@ -26,14 +37,16 @@ module MegaManX
 
         update()
         {
-            this.game.physics.collide(this.player, this.tiles);
+            this.game.physics.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
+
+            this.player.updateCurrentAnimation();
         }
 
         render()
         {
             this.game.debug.renderSpriteBounds(this.player, 'red');
             this.game.debug.renderSpriteInfo(this.player, 32, 32);
-            this.game.debug.renderSpriteBody(this.player, 'blue');
+            //this.game.debug.renderSpriteBody(this.player, 'blue');
             this.game.debug.renderSpriteCollision(this.player, 32, 160);
             //this.game.debug.renderSpriteInputInfo(this.player, 32, 320);
 

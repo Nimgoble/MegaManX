@@ -6,6 +6,9 @@ module MegaManX
         nextAnimation: string;
         frameVelocityX: number;
         frameVelocityY: number;
+        onGround: boolean;
+        canJump: boolean;
+
         constructor(game: Phaser.Game, x: number, y: number)
         {
             super(game, x, y, 'megamanx', 0);
@@ -15,14 +18,18 @@ module MegaManX
             this.animations.add('run', Phaser.Animation.generateFrameNames('run', 1, 11, '', 4), 15, true);
             this.animations.add('shoot', Phaser.Animation.generateFrameNames('shoot', 1, 2, '', 4), 15, true);
             this.animations.add('jump', Phaser.Animation.generateFrameNames('jump', 1, 7, '', 4), 15, true);
-            this.anchor.setTo(0.5, 0);
+            this.anchor.setTo(0.5, 0.5);
 
             this.body.collideWorldBounds = true;
-            this.body.gravity.x = 0;
+            //this.body.gravity.x = 0;
             this.body.gravity.y = 5;
             this.body.allowGravity = true;
             this.body.allowCollision.any = true;
             this.body.setSize(32, 32, 0, 0);
+            this.body.bounce.setTo(0, 0);
+
+            this.canJump = true;
+            this.onGround = false;
 
             game.add.existing(this);
         }
@@ -48,14 +55,30 @@ module MegaManX
             }
 
             //Jump
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP))
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.canJump)
             {
+                this.body.y -= 1;
                 this.body.velocity.y = -150;
+                this.canJump = false;
             }
 
             this.frameVelocityX = this.body.velocity.x;
             this.frameVelocityY = this.body.velocity.y;
+        }
 
+        collisionCallback(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
+        {
+            if (obj1 === this)
+            {
+                if(obj1.body.touching.down)
+                    this.onGround = true;
+
+                this.canJump = true;
+            }
+        }
+
+        updateCurrentAnimation()
+        {
             this.nextAnimation = this.currentAnimation;
 
             //Display appropriate animation
@@ -65,23 +88,15 @@ module MegaManX
                 //this.animations.play('jump');
                 this.nextAnimation = 'jump';
             }
-            else if(this.body.velocity.x !== 0)
+            else if (this.body.velocity.x !== 0)
             {
                 if (this.body.velocity.x > 0)
                 {
-                    if (this.scale.x === -1)
-                    {
-                        this.scale.x = 1;
-                    }
                     //this.animations.play('run');
                     this.nextAnimation = 'run';
                 }
                 else if (this.body.velocity.x < 0)
                 {
-                    if (this.scale.x === 1)
-                    {
-                        this.scale.x = -1;
-                    }
                     //this.animations.play('run');
                     this.nextAnimation = 'run';
                 }
@@ -92,12 +107,27 @@ module MegaManX
                 this.nextAnimation = 'idle';
             }
 
+            //Face the player in the correct direction
+            if (this.body.velocity.x > 0)
+            {
+                if (this.scale.x === -1)
+                {
+                    this.scale.x = 1;
+                }
+            }
+            else if (this.body.velocity.x < 0)
+            {
+                if (this.scale.x === 1)
+                {
+                    this.scale.x = -1;
+                }
+            }
+
             if (this.nextAnimation !== this.currentAnimation)
                 this.animations.stop(this.currentAnimation);
 
             this.animations.play(this.nextAnimation);
             this.currentAnimation = this.nextAnimation;
-
         }
     }
 }
