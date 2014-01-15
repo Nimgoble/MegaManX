@@ -14,20 +14,32 @@ var MegaManX;
         TestLevel.prototype.create = function () {
             this.tiles = this.game.add.group();
 
-            for (var x = 0; x < 20; x++) {
-                var tile = this.tiles.create((x * 32), 300, 'genericTile');
+            //Floor
+            var tile = this.tiles.create(0, 352, 'genericTile');
+            tile.body.immovable = true;
+            tile.body.allowCollision.up = true;
+            tile.body.width = (20 * 32);
+
+            for (var x = 1; x < 20; x++) {
+                var tile = this.tiles.create((x * 32), 352, 'genericTile');
                 tile.bounds.height = tile.bounds.width = 32;
                 tile.body.immovable = true;
-                tile.body.collideWorldBounds = true;
-                tile.body.allowCollision.up = true;
+                tile.body.collideWorldBounds = false;
+                tile.body.allowCollision.none = true;
             }
 
-            for (var x = 0; x < 10; x++) {
-                var tile = this.tiles.create(0, 300 - ((x + 1) * 32), 'genericTile');
+            //Left wall
+            var otherTile = this.tiles.create(0, 0, 'genericTile');
+            otherTile.body.allowCollision.right = true;
+            otherTile.body.immovable = true;
+            tile.body.height = 332;
+
+            for (var x = 1; x < 10; x++) {
+                var tile = this.tiles.create(0, 0 + (x * 32), 'genericTile');
                 tile.bounds.height = tile.bounds.width = 32;
                 tile.body.immovable = true;
-                tile.body.collideWorldBounds = true;
-                tile.body.allowCollision.right = true;
+                tile.body.collideWorldBounds = false;
+                tile.body.allowCollision.none = true;
                 tile.body.rotation = 90;
             }
 
@@ -49,19 +61,11 @@ var MegaManX;
             //this.game.debug.renderSpriteBody(this.player, 'blue');
             this.game.debug.renderSpriteCollision(this.player, 32, 160);
 
-            //this.game.debug.renderSpriteInputInfo(this.player, 32, 320);
-            this.game.debug.renderText('Current Animation: ' + this.player.currentAnimation, 32, 356);
-            this.game.debug.renderText('Next Animation: ' + this.player.nextAnimation, 32, 372);
-
-            this.game.debug.renderText('Frame Velocity X: ' + this.player.frameVelocityX.toString(), 32, 388);
-            this.game.debug.renderText('Frame Velocity Y: ' + this.player.frameVelocityY.toString(), 32, 404);
-
             for (var i = 0; i < this.tiles.length; i++) {
                 this.game.debug.renderSpriteBounds(this.tiles.getAt(i), 'purple');
                 //this.game.debug.renderSpriteCollision(this.tiles.getAt(i), 32, 32);
             }
-
-            this.game.debug.renderQuadTree(this.game.physics.quadTree);
+            //this.game.debug.renderQuadTree(this.game.physics.quadTree);
         };
         return TestLevel;
     })(Phaser.State);

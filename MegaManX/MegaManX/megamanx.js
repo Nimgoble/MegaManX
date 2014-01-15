@@ -152,11 +152,13 @@ var MegaManX;
         function Player(game, x, y) {
             _super.call(this, game, x, y, 'megamanx', 0);
 
-            this.animations.add('idle', Phaser.Animation.generateFrameNames('idle', 1, 1, '', 4), 1, true);
-            this.animations.add('idleBlink', Phaser.Animation.generateFrameNames('idle', 2, 2, '', 4), 1, true);
+            this.currentAnimation = this.animations.add('idle', Phaser.Animation.generateFrameNames('idle', 1, 1, '', 4), 1, true);
+            this.animations.add('idleBlink', Phaser.Animation.generateFrameNames('idle', 2, 3, '', 4), 1, true);
             this.animations.add('run', Phaser.Animation.generateFrameNames('run', 1, 11, '', 4), 15, true);
             this.animations.add('shoot', Phaser.Animation.generateFrameNames('shoot', 1, 2, '', 4), 15, true);
-            this.animations.add('jump', Phaser.Animation.generateFrameNames('jump', 1, 7, '', 4), 15, true);
+            this.animations.add('jumpStart', Phaser.Animation.generateFrameNames('jump', 1, 3, '', 4), 15, false);
+            this.animations.add('jumpInAir', Phaser.Animation.generateFrameNames('jump', 4, 4, '', 4), 15, false);
+            this.animations.add('jumpFinish', Phaser.Animation.generateFrameNames('jump', 5, 7, '', 4), 15, false);
             this.anchor.setTo(0.5, 0.5);
 
             this.body.collideWorldBounds = true;
@@ -170,12 +172,12 @@ var MegaManX;
 
             this.canJump = true;
             this.onGround = false;
+            this.jumped = false;
 
             game.add.existing(this);
         }
         Player.prototype.create = function () {
-            this.animations.play('idle');
-            this.currentAnimation = 'idle';
+            this.currentAnimation = this.animations.play('idle');
         };
 
         Player.prototype.update = function () {
@@ -193,6 +195,7 @@ var MegaManX;
                 this.body.y -= 1;
                 this.body.velocity.y = -150;
                 this.canJump = false;
+                this.jumped = true;
             }
 
             this.frameVelocityX = this.body.velocity.x;
@@ -205,28 +208,51 @@ var MegaManX;
                     this.onGround = true;
 
                 this.canJump = true;
+                this.jumped = false;
             }
         };
 
         Player.prototype.updateCurrentAnimation = function () {
+            if (this.currentAnimation === undefined)
+                return;
+
+            //console.log('current animation is not null: ' + this.currentAnimation.name);
             this.nextAnimation = this.currentAnimation;
 
             //Display appropriate animation
-            if (this.body.velocity.y !== 0) {
+            if (this.body.velocity.y !== 0 || this.jumped === true) {
                 //This isn't techically true, but it'll do for now
                 //this.animations.play('jump');
-                this.nextAnimation = 'jump';
-            } else if (this.body.velocity.x !== 0) {
-                if (this.body.velocity.x > 0) {
-                    //this.animations.play('run');
-                    this.nextAnimation = 'run';
-                } else if (this.body.velocity.x < 0) {
-                    //this.animations.play('run');
-                    this.nextAnimation = 'run';
+                //this.nextAnimation = 'jump';
+                //If we've jumped and our jump animation is done playing and we're falling
+                //Play the in-air animation
+                if (this.currentAnimation.name == 'jumpStart' && this.currentAnimation.isFinished && this.body.velocity.y >= 0) {
+                    this.nextAnimation = this.animations.getAnimation('jumpInAir');
+                } else if (this.body.velocity.y < 0 && this.currentAnimation.name !== 'jumpStart') {
+                    //if we're going up and our animation isn't jump and we jumped
+                    this.nextAnimation = this.animations.getAnimation('jumpStart');
+                } else {
+                    //Regular falling animation goes here.
+                }
+            } else if (this.body.velocity.x !== 0 && this.jumped === false) {
+                //Wait until our jumpFinish animation is done to move.
+                if (this.currentAnimation.name !== 'jumpFinish' || (this.currentAnimation.name === 'jumpFinish' && this.currentAnimation.isFinished)) {
+                    if (this.body.velocity.x > 0) {
+                        //this.animations.play('run');
+                        this.nextAnimation = this.animations.getAnimation('run');
+                    } else if (this.body.velocity.x < 0) {
+                        //this.animations.play('run');
+                        this.nextAnimation = this.animations.getAnimation('run');
+                    }
                 }
             } else {
-                //this.animations.play('idle');
-                this.nextAnimation = 'idle';
+                //We should be idling.
+                this.nextAnimation = this.animations.getAnimation('idle');
+            }
+
+            //If we JUST got done jumping/falling: play the jumpFinish animation
+            if (this.body.velocity.y === 0 && this.body.deltaY() > 0) {
+                this.nextAnimation = this.animations.getAnimation('jumpFinish');
             }
 
             //Face the player in the correct direction
@@ -240,11 +266,13 @@ var MegaManX;
                 }
             }
 
-            if (this.nextAnimation !== this.currentAnimation)
-                this.animations.stop(this.currentAnimation);
-
-            this.animations.play(this.nextAnimation);
-            this.currentAnimation = this.nextAnimation;
+            if (this.nextAnimation.name !== this.currentAnimation.name) {
+                console.log('stopping animation: ' + this.currentAnimation.name);
+                this.animations.stop(this.currentAnimation.name, true);
+                console.log('attempting to play new animation: ' + this.nextAnimation.name);
+                this.currentAnimation = this.animations.play(this.nextAnimation.name);
+                console.log('current animation after play attempt: ' + this.currentAnimation.name);
+            }
         };
         return Player;
     })(Phaser.Sprite);
@@ -260,20 +288,32 @@ var MegaManX;
         TestLevel.prototype.create = function () {
             this.tiles = this.game.add.group();
 
-            for (var x = 0; x < 20; x++) {
-                var tile = this.tiles.create((x * 32), 300, 'genericTile');
+            //Floor
+            var tile = this.tiles.create(0, 352, 'genericTile');
+            tile.body.immovable = true;
+            tile.body.allowCollision.up = true;
+            tile.body.width = (20 * 32);
+
+            for (var x = 1; x < 20; x++) {
+                var tile = this.tiles.create((x * 32), 352, 'genericTile');
                 tile.bounds.height = tile.bounds.width = 32;
                 tile.body.immovable = true;
-                tile.body.collideWorldBounds = true;
-                tile.body.allowCollision.up = true;
+                tile.body.collideWorldBounds = false;
+                tile.body.allowCollision.none = true;
             }
 
-            for (var x = 0; x < 10; x++) {
-                var tile = this.tiles.create(0, 300 - ((x + 1) * 32), 'genericTile');
+            //Left wall
+            var otherTile = this.tiles.create(0, 0, 'genericTile');
+            otherTile.body.allowCollision.right = true;
+            otherTile.body.immovable = true;
+            tile.body.height = 332;
+
+            for (var x = 1; x < 10; x++) {
+                var tile = this.tiles.create(0, 0 + (x * 32), 'genericTile');
                 tile.bounds.height = tile.bounds.width = 32;
                 tile.body.immovable = true;
-                tile.body.collideWorldBounds = true;
-                tile.body.allowCollision.right = true;
+                tile.body.collideWorldBounds = false;
+                tile.body.allowCollision.none = true;
                 tile.body.rotation = 90;
             }
 
@@ -295,19 +335,11 @@ var MegaManX;
             //this.game.debug.renderSpriteBody(this.player, 'blue');
             this.game.debug.renderSpriteCollision(this.player, 32, 160);
 
-            //this.game.debug.renderSpriteInputInfo(this.player, 32, 320);
-            this.game.debug.renderText('Current Animation: ' + this.player.currentAnimation, 32, 356);
-            this.game.debug.renderText('Next Animation: ' + this.player.nextAnimation, 32, 372);
-
-            this.game.debug.renderText('Frame Velocity X: ' + this.player.frameVelocityX.toString(), 32, 388);
-            this.game.debug.renderText('Frame Velocity Y: ' + this.player.frameVelocityY.toString(), 32, 404);
-
             for (var i = 0; i < this.tiles.length; i++) {
                 this.game.debug.renderSpriteBounds(this.tiles.getAt(i), 'purple');
                 //this.game.debug.renderSpriteCollision(this.tiles.getAt(i), 32, 32);
             }
-
-            this.game.debug.renderQuadTree(this.game.physics.quadTree);
+            //this.game.debug.renderQuadTree(this.game.physics.quadTree);
         };
         return TestLevel;
     })(Phaser.State);

@@ -1324,6 +1324,7 @@ declare module Phaser {
             stop(name?: string, resetFrame?: boolean): void;
             update(): boolean;
             destroy(): void;
+            getAnimation(name: string): Phaser.Animation;
       }
 
       class Animation {
