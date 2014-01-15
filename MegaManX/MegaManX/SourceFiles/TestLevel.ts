@@ -26,9 +26,10 @@ module MegaManX
 
             //Left wall
             var otherTile = this.tiles.create(0, 0, 'genericTile');
-            otherTile.body.allowCollision.right = true;
             otherTile.body.immovable = true;
-            tile.body.height = 332;
+            otherTile.body.allowCollision.right = true;
+            otherTile.body.width = 32;
+            otherTile.body.height = 332;
             //Filler sprites
             for (var x = 1; x < 10; x++)
             {
@@ -40,7 +41,9 @@ module MegaManX
                 tile.body.rotation = 90;
             }
 
-            this.player = new MegaManX.Player(this.game, 34, 263);
+            this.player = new MegaManX.Player(this.game, 64, 0);
+
+            this.camera.follow(this.player);
 
             this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN]);
         }
@@ -66,6 +69,9 @@ module MegaManX
             this.game.debug.renderText('Frame Velocity X: ' + this.player.frameVelocityX.toString(), 32, 388);
             this.game.debug.renderText('Frame Velocity Y: ' + this.player.frameVelocityY.toString(), 32, 404);
             */
+
+            this.game.debug.renderText('Wall sliding: ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 388);
+
             for (var i = 0; i < this.tiles.length; i++)
             {
                 this.game.debug.renderSpriteBounds(this.tiles.getAt(i), 'purple');
