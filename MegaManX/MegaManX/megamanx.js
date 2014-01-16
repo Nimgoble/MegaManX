@@ -204,17 +204,18 @@ var MegaManX;
                 //Jump
                 //this.body.gravity.clampY(-150, 0);
                 this.body.velocity.y = -150;
-                this.canJump = false;
-                this.jumped = true;
-                this.onGround = false;
 
                 //Jump away from the wall
-                if (this.currentAnimation.name === 'wallSlide') {
+                if (this.currentAnimation.name === 'wallSlide' || this.onGround === false) {
                     console.log('jump while sliding');
                     this.body.velocity.x = (150 * -(this.scale.x));
                     this.wallSliding = false;
                 } else
                     console.log('jump while not sliding');
+
+                this.canJump = false;
+                this.jumped = true;
+                this.onGround = false;
             }
 
             if (this.currentAnimation.name === 'wallSlide') {

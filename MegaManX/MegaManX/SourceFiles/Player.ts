@@ -15,13 +15,16 @@ module MegaManX
         static landMovementSpeed: number = 50;
         static maxSpeed: number = 150;
 
+        
+
+
         constructor(game: Phaser.Game, x: number, y: number)
         {
             super(game, x, y, 'megamanx', 0);
 
             this.currentAnimation = this.animations.add('idle', Phaser.Animation.generateFrameNames('idle', 1, 1, '', 4), 1, true);
             this.animations.add('idleBlink', Phaser.Animation.generateFrameNames('idle', 2, 3, '', 4), 1, true);
-            this.animations.add('run', Phaser.Animation.generateFrameNames('run', 1, 11, '', 4), 30, true);
+            this.animations.add('run', Phaser.Animation.generateFrameNames('run', 1, 11, '', 4), 25, true);
             this.animations.add('shoot', Phaser.Animation.generateFrameNames('shoot', 1, 2, '', 4), 30, true);
             this.animations.add('jumpStart', Phaser.Animation.generateFrameNames('jump', 1, 3, '', 4), 30, false);
             this.animations.add('jumpInAir', Phaser.Animation.generateFrameNames('jump', 4, 4, '', 4), 15, false);
@@ -71,12 +74,9 @@ module MegaManX
                 //Jump
                 //this.body.gravity.clampY(-150, 0);
                 this.body.velocity.y = -150;
-                this.canJump = false;
-                this.jumped = true;
-                this.onGround = false;
-
+                
                 //Jump away from the wall
-                if (this.currentAnimation.name === 'wallSlide')
+                if (this.currentAnimation.name === 'wallSlide' || this.onGround === false)
                 {
                     console.log('jump while sliding');
                     this.body.velocity.x = (150 * -(this.scale.x));
@@ -84,6 +84,11 @@ module MegaManX
                 }
                 else
                     console.log('jump while not sliding');
+
+
+                this.canJump = false;
+                this.jumped = true;
+                this.onGround = false;
             }
 
             if (this.currentAnimation.name === 'wallSlide')
