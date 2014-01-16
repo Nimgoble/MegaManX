@@ -11,6 +11,9 @@ module MegaManX
         jumped: boolean;
         wallSliding: boolean;
         teleporting: boolean;
+        static airMovementSpeed: number = 15;
+        static landMovementSpeed: number = 50;
+        static maxSpeed: number = 150;
 
         constructor(game: Phaser.Game, x: number, y: number)
         {
@@ -32,6 +35,7 @@ module MegaManX
             this.body.collideWorldBounds = true;
             //this.body.gravity.x = 0;
             this.body.gravity.y = 5;
+            //this.body.gravity.clampY(0, 5);
             this.body.allowGravity = true;
             this.body.allowCollision.any = true;
             this.body.setSize(32, 32, 0, 0);
@@ -41,18 +45,63 @@ module MegaManX
             this.onGround = false;
             this.jumped = false;
             this.wallSliding = false;
-            this.teleporting = false;
+            this.teleporting = true;
 
             game.add.existing(this);
         }
 
         create()
         {
-            this.teleporting = true;
-            this.currentAnimation = this.animations.play('teleportStart');
+            console.log('creating player');
         }
 
         update()
+        {
+            //Don't allow input while teleporting
+            if (this.teleporting === true)
+                return;
+
+            this.checkMovement();
+
+            //Jump
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.canJump)
+            {
+                //Move the body up a hair so we can jump
+                this.body.y -= 1;
+                //Jump
+                //this.body.gravity.clampY(-150, 0);
+                this.body.velocity.y = -150;
+                this.canJump = false;
+                this.jumped = true;
+                this.onGround = false;
+
+                //Jump away from the wall
+                if (this.currentAnimation.name === 'wallSlide')
+                {
+                    console.log('jump while sliding');
+                    this.body.velocity.x = (150 * -(this.scale.x));
+                    this.wallSliding = false;
+                }
+                else
+                    console.log('jump while not sliding');
+            }
+
+            if (this.currentAnimation.name === 'wallSlide')
+            {
+                this.body.gravity.y = 0.5;
+                //this.body.velocity.clampY(0, 25.0);
+            }
+            else
+            {
+                this.body.gravity.y = 5;
+                //this.body.velocity.clampY(0, 75);
+            }
+
+            //this.frameVelocityX = this.body.velocity.x;
+            //this.frameVelocityY = this.body.velocity.y;
+        }
+
+        checkMovement()
         {
             //Move left/right
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
@@ -61,7 +110,13 @@ module MegaManX
                 if (this.scale.x === 1 && this.wallSliding === true)
                     this.canJump = this.wallSliding = false;
 
-                this.body.velocity.x = -150;
+                if (this.body.velocity.x > -Player.maxSpeed)
+                {
+                    if(this.onGround === true)
+                        this.body.velocity.x -= (this.body.velocity.x - Player.landMovementSpeed < -Player.maxSpeed) ? (-Player.maxSpeed - this.body.velocity.x) : Player.landMovementSpeed;
+                    else
+                        this.body.velocity.x -= (this.body.velocity.x - Player.airMovementSpeed < -Player.maxSpeed) ? (-Player.maxSpeed - this.body.velocity.x) : Player.airMovementSpeed;
+                }
             }
             else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
             {
@@ -69,40 +124,19 @@ module MegaManX
                 if (this.scale.x === -1 && this.wallSliding === true)
                     this.canJump = this.wallSliding = false;
 
-                this.body.velocity.x = 150;
+                if (this.body.velocity.x < 150)
+                {
+                    if (this.onGround === true)
+                        this.body.velocity.x += (this.body.velocity.x + Player.landMovementSpeed > Player.maxSpeed) ? (Player.maxSpeed - this.body.velocity.x) : Player.landMovementSpeed;
+                    else
+                        this.body.velocity.x += (this.body.velocity.x + Player.airMovementSpeed > Player.maxSpeed) ? (Player.maxSpeed - this.body.velocity.x) : Player.airMovementSpeed;
+                }
             }
             else
             {
                 this.wallSliding = false;
                 this.body.velocity.x = 0;
             }
-
-            //Jump
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.canJump)
-            {
-                //Move the body up a hair so we can jump
-                this.body.y -= 1;
-                //Jump
-                this.body.velocity.y = -150;
-                this.canJump = false;
-                this.jumped = true;
-                this.onGround = false;
-
-                //Jump away from the wall
-                if (this.wallSliding === true)
-                {
-                    this.body.velocity.x = (450 * -(this.scale.x));
-                    this.wallSliding = false;
-                }
-            }
-
-            if (this.wallSliding === true)
-                this.body.gravity.y = 2.5;
-            else
-                this.body.gravity.y = 5;
-
-            this.frameVelocityX = this.body.velocity.x;
-            this.frameVelocityY = this.body.velocity.y;
         }
 
         collisionCallback(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
@@ -110,9 +144,8 @@ module MegaManX
             if (obj1 === this)
             {
                 if (obj1.body.touching.down && this.teleporting === true)
-                {
                     this.teleporting = false;
-                }
+
                 if (obj1.body.touching.down)
                     this.onGround = true;
                 else
@@ -121,11 +154,27 @@ module MegaManX
                 this.canJump = true;
                 this.jumped = false;
 
-                if ((this.body.touching.left || this.body.touching.right) && this.onGround === false)
+                //If we're touching a wall and we're not on the ground and we're falling
+                //Then we should be wallsliding
+                if (
+                        (this.body.touching.left || this.body.touching.right) &&
+                        this.onGround === false &&
+                        this.body.velocity.y > 0
+                   )
                     this.wallSliding = true;
                 else
                     this.wallSliding = false;
             }
+        }
+
+        teleportToGround()
+        {
+            this.teleporting = true;
+            this.currentAnimation = this.animations.play('teleportStart');
+            this.body.gravity.y = 150;
+            //this.body.gravity.clampY(0, 150);
+            //start off screen
+            this.body.y = 0 - this.currentAnimation.currentFrame.height;
         }
 
         updateCurrentAnimation()
@@ -135,18 +184,31 @@ module MegaManX
 
             if (this.currentAnimation.name === 'teleportStart')
             {
+                //console.log('current animation is teleportStart');
                 if (this.teleporting === true)
+                {
+                    //console.log('we are teleporting. returning out of updateCurrentAnimation');
                     return;
+                }
                 else
                 {
+                    //console.log('we are no long teleporting. stopping teleportStart animation');
                     this.animations.stop(this.currentAnimation.name, true);
                     this.currentAnimation = this.animations.play('teleportFinish');
+                    this.body.gravity.y = 5;
+
+                    return;
                 }
             }
             else if (this.currentAnimation.name === 'teleportFinish')
             {
                 if (this.currentAnimation.isFinished === false)
+                {
+                    //console.log('in teleportFinish animation. returning.');
                     return;
+                }
+                //else
+                    //console.log('teleportFinish animation is done.  continuing on.');
             }
 
             //console.log('current animation is not null: ' + this.currentAnimation.name);
@@ -224,11 +286,11 @@ module MegaManX
 
             if (this.nextAnimation.name !== this.currentAnimation.name)
             {
-                console.log('stopping animation: ' + this.currentAnimation.name);
+                //console.log('stopping animation: ' + this.currentAnimation.name);
                 this.animations.stop(this.currentAnimation.name, true);
-                console.log('attempting to play new animation: ' + this.nextAnimation.name);
+                //console.log('attempting to play new animation: ' + this.nextAnimation.name);
                 this.currentAnimation = this.animations.play(this.nextAnimation.name);
-                console.log('current animation after play attempt: ' + this.currentAnimation.name);
+                //console.log('current animation after play attempt: ' + this.currentAnimation.name);
             }
         }
     }

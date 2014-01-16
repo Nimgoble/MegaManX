@@ -44,6 +44,7 @@ module MegaManX
             this.player = new MegaManX.Player(this.game, 64, 0);
 
             this.camera.follow(this.player);
+            this.player.teleportToGround();
 
             this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN]);
         }
@@ -70,7 +71,9 @@ module MegaManX
             this.game.debug.renderText('Frame Velocity Y: ' + this.player.frameVelocityY.toString(), 32, 404);
             */
 
-            this.game.debug.renderText('Wall sliding: ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 388);
+            this.game.debug.renderText('Wall sliding: ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 400);
+            this.game.debug.renderText('Teleporting: ' + (this.player.teleporting ? 'Yes' : 'No'), 32, 416);
+            this.game.debug.renderText('Player Gravity: ' + this.player.body.gravity.toString(), 32, 432);
 
             for (var i = 0; i < this.tiles.length; i++)
             {

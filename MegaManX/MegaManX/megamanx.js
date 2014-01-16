@@ -170,6 +170,8 @@ var MegaManX;
 
             //this.body.gravity.x = 0;
             this.body.gravity.y = 5;
+
+            //this.body.gravity.clampY(0, 5);
             this.body.allowGravity = true;
             this.body.allowCollision.any = true;
             this.body.setSize(32, 32, 0, 0);
@@ -179,33 +181,20 @@ var MegaManX;
             this.onGround = false;
             this.jumped = false;
             this.wallSliding = false;
-            this.teleporting = false;
+            this.teleporting = true;
 
             game.add.existing(this);
         }
         Player.prototype.create = function () {
-            this.teleporting = true;
-            this.currentAnimation = this.animations.play('teleportStart');
+            console.log('creating player');
         };
 
         Player.prototype.update = function () {
-            //Move left/right
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-                //If we were wallsliding and then pressed the opposite direction, then we are no long wallsliding
-                if (this.scale.x === 1 && this.wallSliding === true)
-                    this.canJump = this.wallSliding = false;
+            //Don't allow input while teleporting
+            if (this.teleporting === true)
+                return;
 
-                this.body.velocity.x = -150;
-            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-                //If we were wallsliding and then pressed the opposite direction, then we are no long wallsliding
-                if (this.scale.x === -1 && this.wallSliding === true)
-                    this.canJump = this.wallSliding = false;
-
-                this.body.velocity.x = 150;
-            } else {
-                this.wallSliding = false;
-                this.body.velocity.x = 0;
-            }
+            this.checkMovement();
 
             //Jump
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.canJump) {
@@ -213,32 +202,67 @@ var MegaManX;
                 this.body.y -= 1;
 
                 //Jump
+                //this.body.gravity.clampY(-150, 0);
                 this.body.velocity.y = -150;
                 this.canJump = false;
                 this.jumped = true;
                 this.onGround = false;
 
                 //Jump away from the wall
-                if (this.wallSliding === true) {
-                    this.body.velocity.x = (450 * -(this.scale.x));
+                if (this.currentAnimation.name === 'wallSlide') {
+                    console.log('jump while sliding');
+                    this.body.velocity.x = (150 * -(this.scale.x));
                     this.wallSliding = false;
-                }
+                } else
+                    console.log('jump while not sliding');
             }
 
-            if (this.wallSliding === true)
-                this.body.gravity.y = 2.5;
-            else
+            if (this.currentAnimation.name === 'wallSlide') {
+                this.body.gravity.y = 0.5;
+                //this.body.velocity.clampY(0, 25.0);
+            } else {
                 this.body.gravity.y = 5;
+                //this.body.velocity.clampY(0, 75);
+            }
+            //this.frameVelocityX = this.body.velocity.x;
+            //this.frameVelocityY = this.body.velocity.y;
+        };
 
-            this.frameVelocityX = this.body.velocity.x;
-            this.frameVelocityY = this.body.velocity.y;
+        Player.prototype.checkMovement = function () {
+            //Move left/right
+            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+                //If we were wallsliding and then pressed the opposite direction, then we are no long wallsliding
+                if (this.scale.x === 1 && this.wallSliding === true)
+                    this.canJump = this.wallSliding = false;
+
+                if (this.body.velocity.x > -Player.maxSpeed) {
+                    if (this.onGround === true)
+                        this.body.velocity.x -= (this.body.velocity.x - Player.landMovementSpeed < -Player.maxSpeed) ? (-Player.maxSpeed - this.body.velocity.x) : Player.landMovementSpeed;
+                    else
+                        this.body.velocity.x -= (this.body.velocity.x - Player.airMovementSpeed < -Player.maxSpeed) ? (-Player.maxSpeed - this.body.velocity.x) : Player.airMovementSpeed;
+                }
+            } else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+                //If we were wallsliding and then pressed the opposite direction, then we are no long wallsliding
+                if (this.scale.x === -1 && this.wallSliding === true)
+                    this.canJump = this.wallSliding = false;
+
+                if (this.body.velocity.x < 150) {
+                    if (this.onGround === true)
+                        this.body.velocity.x += (this.body.velocity.x + Player.landMovementSpeed > Player.maxSpeed) ? (Player.maxSpeed - this.body.velocity.x) : Player.landMovementSpeed;
+                    else
+                        this.body.velocity.x += (this.body.velocity.x + Player.airMovementSpeed > Player.maxSpeed) ? (Player.maxSpeed - this.body.velocity.x) : Player.airMovementSpeed;
+                }
+            } else {
+                this.wallSliding = false;
+                this.body.velocity.x = 0;
+            }
         };
 
         Player.prototype.collisionCallback = function (obj1, obj2) {
             if (obj1 === this) {
-                if (obj1.body.touching.down && this.teleporting === true) {
+                if (obj1.body.touching.down && this.teleporting === true)
                     this.teleporting = false;
-                }
+
                 if (obj1.body.touching.down)
                     this.onGround = true;
                 else
@@ -247,11 +271,23 @@ var MegaManX;
                 this.canJump = true;
                 this.jumped = false;
 
-                if ((this.body.touching.left || this.body.touching.right) && this.onGround === false)
+                //If we're touching a wall and we're not on the ground and we're falling
+                //Then we should be wallsliding
+                if ((this.body.touching.left || this.body.touching.right) && this.onGround === false && this.body.velocity.y > 0)
                     this.wallSliding = true;
                 else
                     this.wallSliding = false;
             }
+        };
+
+        Player.prototype.teleportToGround = function () {
+            this.teleporting = true;
+            this.currentAnimation = this.animations.play('teleportStart');
+            this.body.gravity.y = 150;
+
+            //this.body.gravity.clampY(0, 150);
+            //start off screen
+            this.body.y = 0 - this.currentAnimation.currentFrame.height;
         };
 
         Player.prototype.updateCurrentAnimation = function () {
@@ -259,15 +295,25 @@ var MegaManX;
                 return;
 
             if (this.currentAnimation.name === 'teleportStart') {
-                if (this.teleporting === true)
+                //console.log('current animation is teleportStart');
+                if (this.teleporting === true) {
+                    //console.log('we are teleporting. returning out of updateCurrentAnimation');
                     return;
-                else {
+                } else {
+                    //console.log('we are no long teleporting. stopping teleportStart animation');
                     this.animations.stop(this.currentAnimation.name, true);
                     this.currentAnimation = this.animations.play('teleportFinish');
+                    this.body.gravity.y = 5;
+
+                    return;
                 }
             } else if (this.currentAnimation.name === 'teleportFinish') {
-                if (this.currentAnimation.isFinished === false)
+                if (this.currentAnimation.isFinished === false) {
+                    //console.log('in teleportFinish animation. returning.');
                     return;
+                }
+                //else
+                //console.log('teleportFinish animation is done.  continuing on.');
             }
 
             //console.log('current animation is not null: ' + this.currentAnimation.name);
@@ -319,13 +365,17 @@ var MegaManX;
             }
 
             if (this.nextAnimation.name !== this.currentAnimation.name) {
-                console.log('stopping animation: ' + this.currentAnimation.name);
+                //console.log('stopping animation: ' + this.currentAnimation.name);
                 this.animations.stop(this.currentAnimation.name, true);
-                console.log('attempting to play new animation: ' + this.nextAnimation.name);
+
+                //console.log('attempting to play new animation: ' + this.nextAnimation.name);
                 this.currentAnimation = this.animations.play(this.nextAnimation.name);
-                console.log('current animation after play attempt: ' + this.currentAnimation.name);
+                //console.log('current animation after play attempt: ' + this.currentAnimation.name);
             }
         };
+        Player.airMovementSpeed = 15;
+        Player.landMovementSpeed = 50;
+        Player.maxSpeed = 150;
         return Player;
     })(Phaser.Sprite);
     MegaManX.Player = Player;
@@ -373,6 +423,7 @@ var MegaManX;
             this.player = new MegaManX.Player(this.game, 64, 0);
 
             this.camera.follow(this.player);
+            this.player.teleportToGround();
 
             this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN]);
         };
@@ -398,7 +449,9 @@ var MegaManX;
             this.game.debug.renderText('Frame Velocity X: ' + this.player.frameVelocityX.toString(), 32, 388);
             this.game.debug.renderText('Frame Velocity Y: ' + this.player.frameVelocityY.toString(), 32, 404);
             */
-            this.game.debug.renderText('Wall sliding: ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 388);
+            this.game.debug.renderText('Wall sliding: ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 400);
+            this.game.debug.renderText('Teleporting: ' + (this.player.teleporting ? 'Yes' : 'No'), 32, 416);
+            this.game.debug.renderText('Player Gravity: ' + this.player.body.gravity.toString(), 32, 432);
 
             for (var i = 0; i < this.tiles.length; i++) {
                 this.game.debug.renderSpriteBounds(this.tiles.getAt(i), 'purple');
