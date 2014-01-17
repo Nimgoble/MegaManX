@@ -14,7 +14,10 @@ module MegaManX
         static airMovementSpeed: number = 15;
         static landMovementSpeed: number = 50;
         static maxSpeed: number = 150;
-
+        static regularGravity: number = 7.5;
+        static slidingGravity: number = 0.5;
+        static teleportGravity: number = 150;
+        static jumpVelocty: number = 150;
         
 
 
@@ -37,11 +40,11 @@ module MegaManX
 
             this.body.collideWorldBounds = true;
             //this.body.gravity.x = 0;
-            this.body.gravity.y = 5;
+            this.body.gravity.y = Player.regularGravity;
             //this.body.gravity.clampY(0, 5);
             this.body.allowGravity = true;
             this.body.allowCollision.any = true;
-            this.body.setSize(32, 32, 0, 0);
+            this.body.setSize(30, 30, 0, 0);
             this.body.bounce.setTo(0, 0);
 
             this.canJump = true;
@@ -73,13 +76,13 @@ module MegaManX
                 this.body.y -= 1;
                 //Jump
                 //this.body.gravity.clampY(-150, 0);
-                this.body.velocity.y = -150;
+                this.body.velocity.y = -Player.jumpVelocty;
                 
                 //Jump away from the wall
                 if (this.currentAnimation.name === 'wallSlide' || this.onGround === false)
                 {
                     console.log('jump while sliding');
-                    this.body.velocity.x = (150 * -(this.scale.x));
+                    this.body.velocity.x = (Player.jumpVelocty * -(this.scale.x));
                     this.wallSliding = false;
                 }
                 else
@@ -93,12 +96,12 @@ module MegaManX
 
             if (this.currentAnimation.name === 'wallSlide')
             {
-                this.body.gravity.y = 0.5;
+                this.body.gravity.y = Player.slidingGravity;
                 //this.body.velocity.clampY(0, 25.0);
             }
             else
             {
-                this.body.gravity.y = 5;
+                this.body.gravity.y = Player.regularGravity;
                 //this.body.velocity.clampY(0, 75);
             }
 
@@ -129,7 +132,7 @@ module MegaManX
                 if (this.scale.x === -1 && this.wallSliding === true)
                     this.canJump = this.wallSliding = false;
 
-                if (this.body.velocity.x < 150)
+                if (this.body.velocity.x < Player.maxSpeed)
                 {
                     if (this.onGround === true)
                         this.body.velocity.x += (this.body.velocity.x + Player.landMovementSpeed > Player.maxSpeed) ? (Player.maxSpeed - this.body.velocity.x) : Player.landMovementSpeed;
@@ -176,7 +179,7 @@ module MegaManX
         {
             this.teleporting = true;
             this.currentAnimation = this.animations.play('teleportStart');
-            this.body.gravity.y = 150;
+            this.body.gravity.y = Player.teleportGravity;
             //this.body.gravity.clampY(0, 150);
             //start off screen
             this.body.y = 0 - this.currentAnimation.currentFrame.height;
@@ -200,7 +203,7 @@ module MegaManX
                     //console.log('we are no long teleporting. stopping teleportStart animation');
                     this.animations.stop(this.currentAnimation.name, true);
                     this.currentAnimation = this.animations.play('teleportFinish');
-                    this.body.gravity.y = 5;
+                    this.body.gravity.y = Player.regularGravity;
 
                     return;
                 }

@@ -28,12 +28,12 @@ var MegaManX;
             this.body.collideWorldBounds = true;
 
             //this.body.gravity.x = 0;
-            this.body.gravity.y = 5;
+            this.body.gravity.y = Player.regularGravity;
 
             //this.body.gravity.clampY(0, 5);
             this.body.allowGravity = true;
             this.body.allowCollision.any = true;
-            this.body.setSize(32, 32, 0, 0);
+            this.body.setSize(30, 30, 0, 0);
             this.body.bounce.setTo(0, 0);
 
             this.canJump = true;
@@ -62,12 +62,12 @@ var MegaManX;
 
                 //Jump
                 //this.body.gravity.clampY(-150, 0);
-                this.body.velocity.y = -150;
+                this.body.velocity.y = -Player.jumpVelocty;
 
                 //Jump away from the wall
                 if (this.currentAnimation.name === 'wallSlide' || this.onGround === false) {
                     console.log('jump while sliding');
-                    this.body.velocity.x = (150 * -(this.scale.x));
+                    this.body.velocity.x = (Player.jumpVelocty * -(this.scale.x));
                     this.wallSliding = false;
                 } else
                     console.log('jump while not sliding');
@@ -78,10 +78,10 @@ var MegaManX;
             }
 
             if (this.currentAnimation.name === 'wallSlide') {
-                this.body.gravity.y = 0.5;
+                this.body.gravity.y = Player.slidingGravity;
                 //this.body.velocity.clampY(0, 25.0);
             } else {
-                this.body.gravity.y = 5;
+                this.body.gravity.y = Player.regularGravity;
                 //this.body.velocity.clampY(0, 75);
             }
             //this.frameVelocityX = this.body.velocity.x;
@@ -106,7 +106,7 @@ var MegaManX;
                 if (this.scale.x === -1 && this.wallSliding === true)
                     this.canJump = this.wallSliding = false;
 
-                if (this.body.velocity.x < 150) {
+                if (this.body.velocity.x < Player.maxSpeed) {
                     if (this.onGround === true)
                         this.body.velocity.x += (this.body.velocity.x + Player.landMovementSpeed > Player.maxSpeed) ? (Player.maxSpeed - this.body.velocity.x) : Player.landMovementSpeed;
                     else
@@ -143,7 +143,7 @@ var MegaManX;
         Player.prototype.teleportToGround = function () {
             this.teleporting = true;
             this.currentAnimation = this.animations.play('teleportStart');
-            this.body.gravity.y = 150;
+            this.body.gravity.y = Player.teleportGravity;
 
             //this.body.gravity.clampY(0, 150);
             //start off screen
@@ -163,7 +163,7 @@ var MegaManX;
                     //console.log('we are no long teleporting. stopping teleportStart animation');
                     this.animations.stop(this.currentAnimation.name, true);
                     this.currentAnimation = this.animations.play('teleportFinish');
-                    this.body.gravity.y = 5;
+                    this.body.gravity.y = Player.regularGravity;
 
                     return;
                 }
@@ -236,6 +236,10 @@ var MegaManX;
         Player.airMovementSpeed = 15;
         Player.landMovementSpeed = 50;
         Player.maxSpeed = 150;
+        Player.regularGravity = 7.5;
+        Player.slidingGravity = 0.5;
+        Player.teleportGravity = 150;
+        Player.jumpVelocty = 150;
         return Player;
     })(Phaser.Sprite);
     MegaManX.Player = Player;

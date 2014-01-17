@@ -35,7 +35,7 @@ var MegaManX;
             otherTile.body.width = 32;
             otherTile.body.height = 332;
 
-            for (var x = 1; x < 10; x++) {
+            for (var x = 1; x < 11; x++) {
                 var tile = this.tiles.create(0, 0 + (x * 32), 'genericTile');
                 tile.bounds.height = tile.bounds.width = 32;
                 tile.body.immovable = true;
