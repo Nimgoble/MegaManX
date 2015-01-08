@@ -45,7 +45,7 @@ module MegaManX
                 tile.body.collideWorldBounds = false;
                 tile.body.allowGravity = false;
             }
-            this.slope.rotation = -15;
+            this.slope.angle = -15;
 
             this.player = new MegaManX.Player(this.game, 64, 0);
 
