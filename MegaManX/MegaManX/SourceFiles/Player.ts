@@ -38,12 +38,14 @@ module MegaManX
             this.animations.add('teleportFinish', Phaser.Animation.generateFrameNames('teleport', 2, 8, '', 4), 30, false);
             this.anchor.setTo(0.5, 0.5);
 
+            game.physics.enable(this, Phaser.Physics.ARCADE);
+
             this.body.collideWorldBounds = true;
             //this.body.gravity.x = 0;
             this.body.gravity.y = Player.regularGravity;
             //this.body.gravity.clampY(0, 5);
             this.body.allowGravity = true;
-            this.body.allowCollision.any = true;
+            //this.body.allowCollision.any = true;
             this.body.setSize(30, 30, 0, 0);
             this.body.bounce.setTo(0, 0);
 

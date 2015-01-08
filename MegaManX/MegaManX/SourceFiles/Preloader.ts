@@ -30,6 +30,8 @@ module MegaManX
 
         startMainMenu()
         {
+            this.game.physics.startSystem(Phaser.Physics.ARCADE);
+            this.game.physics.arcade.gravity.y = 300;
             this.game.state.start('TestLevel', true, false);
         }
     }

@@ -11,12 +11,10 @@ var MegaManX;
         function Game() {
             //TODO: Change to Phaser.AUTO
             _super.call(this, 800, 600, Phaser.CANVAS, 'content', null);
-
             this.state.add('Boot', MegaManX.Boot, false);
             this.state.add('Preloader', MegaManX.Preloader, false);
             this.state.add('MainMenu', MegaManX.MainMenu, false);
             this.state.add('TestLevel', MegaManX.TestLevel, false);
-
             //this.state.add('Level1', Level1, false);
             this.state.start('Boot');
         }
