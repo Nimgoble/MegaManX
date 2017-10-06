@@ -1,5 +1,4 @@
-
-window.onload = () => 
-{
+﻿
+window.onload = () => {
     var game = new MegaManX.Game();
 };

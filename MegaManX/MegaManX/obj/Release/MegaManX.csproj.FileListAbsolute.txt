@@ -1,0 +1,5 @@
+F:\Programming\Misc Projects\MegaManX\MegaManX\bin\MegaManX.dll.config
+F:\Programming\Misc Projects\MegaManX\MegaManX\bin\MegaManX.dll
+F:\Programming\Misc Projects\MegaManX\MegaManX\bin\MegaManX.pdb
+F:\Programming\Misc Projects\MegaManX\MegaManX\obj\Release\MegaManX.dll
+F:\Programming\Misc Projects\MegaManX\MegaManX\obj\Release\MegaManX.pdb

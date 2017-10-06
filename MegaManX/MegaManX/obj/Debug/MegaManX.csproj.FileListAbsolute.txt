@@ -1,21 +1,7 @@
-E:\Programming\PhaserIO\MegaManX\MegaManX\bin\MegaManX.dll
-E:\Programming\PhaserIO\MegaManX\MegaManX\bin\MegaManX.pdb
-E:\Programming\PhaserIO\MegaManX\MegaManX\obj\Debug\MegaManX.dll
-E:\Programming\PhaserIO\MegaManX\MegaManX\obj\Debug\MegaManX.pdb
-E:\Programming\PhaserIO\MegaManX\MegaManX\obj\Debug\MegaManX.csprojResolveAssemblyReference.cache
-C:\Source code\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.dll
-C:\Source code\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.pdb
-C:\Source code\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.csprojResolveAssemblyReference.cache
-C:\Source code\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.dll
-C:\Source code\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.pdb
-E:\Programming\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.dll
-E:\Programming\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.pdb
-E:\Programming\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.csprojResolveAssemblyReference.cache
-E:\Programming\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.dll
-E:\Programming\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.pdb
-E:\SourceCode\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.csprojResolveAssemblyReference.cache
-E:\SourceCode\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.dll
-E:\SourceCode\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.pdb
-E:\SourceCode\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.dll.config
-E:\SourceCode\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.dll
-E:\SourceCode\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.pdb
+F:\Programming\Misc Projects\MegaManX\MegaManX\bin\MegaManX.dll.config
+F:\Programming\Misc Projects\MegaManX\MegaManX\bin\MegaManX.dll
+F:\Programming\Misc Projects\MegaManX\MegaManX\bin\MegaManX.pdb
+F:\Programming\Misc Projects\MegaManX\MegaManX\obj\Debug\MegaManX.dll
+F:\Programming\Misc Projects\MegaManX\MegaManX\obj\Debug\MegaManX.pdb
+F:\Programming\Misc Projects\MegaManX\MegaManX\obj\Debug\MegaManX.csprojResolveAssemblyReference.cache
+F:\Programming\Misc Projects\MegaManX\MegaManX\obj\Debug\MegaManX.csproj.CoreCompileInputs.cache

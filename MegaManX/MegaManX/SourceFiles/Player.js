@@ -1,8 +1,7 @@
-var __extends = this.__extends || function (d, b) {
+var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var MegaManX;
 (function (MegaManX) {
@@ -17,18 +16,14 @@ var MegaManX;
             this.animations.add('jumpStart', Phaser.Animation.generateFrameNames('jump', 1, 3, '', 4), 30, false);
             this.animations.add('jumpInAir', Phaser.Animation.generateFrameNames('jump', 4, 4, '', 4), 15, false);
             this.animations.add('jumpFinish', Phaser.Animation.generateFrameNames('jump', 5, 7, '', 4), 30, false);
-            //this.animations.add('fall', Phaser.Animation.generateFrameNames('misc', 2, 2, '', 4), 15, false);
             this.animations.add('wallSlide', Phaser.Animation.generateFrameNames('wallslide', 1, 1, '', 4), 15, false);
             this.animations.add('teleportStart', Phaser.Animation.generateFrameNames('teleport', 1, 1, '', 4), 15, false);
             this.animations.add('teleportFinish', Phaser.Animation.generateFrameNames('teleport', 2, 8, '', 4), 30, false);
             this.anchor.setTo(0.5, 0.5);
             game.physics.enable(this, Phaser.Physics.ARCADE);
             this.body.collideWorldBounds = true;
-            //this.body.gravity.x = 0;
             this.body.gravity.y = Player.regularGravity;
-            //this.body.gravity.clampY(0, 5);
             this.body.allowGravity = true;
-            //this.body.allowCollision.any = true;
             this.body.setSize(30, 30, 0, 0);
             this.body.bounce.setTo(0, 0);
             this.canJump = true;
@@ -42,18 +37,12 @@ var MegaManX;
             console.log('creating player');
         };
         Player.prototype.update = function () {
-            //Don't allow input while teleporting
             if (this.teleporting === true)
                 return;
             this.checkMovement();
-            //Jump
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.canJump) {
-                //Move the body up a hair so we can jump
                 this.body.y -= 1;
-                //Jump
-                //this.body.gravity.clampY(-150, 0);
                 this.body.velocity.y = -Player.jumpVelocty;
-                //Jump away from the wall
                 if (this.currentAnimation.name === 'wallSlide' || this.onGround === false) {
                     console.log('jump while sliding');
                     this.body.velocity.x = (Player.jumpVelocty * -(this.scale.x));
@@ -71,13 +60,9 @@ var MegaManX;
             else {
                 this.body.gravity.y = Player.regularGravity;
             }
-            //this.frameVelocityX = this.body.velocity.x;
-            //this.frameVelocityY = this.body.velocity.y;
         };
         Player.prototype.checkMovement = function () {
-            //Move left/right
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-                //If we were wallsliding and then pressed the opposite direction, then we are no long wallsliding
                 if (this.scale.x === 1 && this.wallSliding === true)
                     this.canJump = this.wallSliding = false;
                 if (this.body.velocity.x > -Player.maxSpeed) {
@@ -88,7 +73,6 @@ var MegaManX;
                 }
             }
             else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-                //If we were wallsliding and then pressed the opposite direction, then we are no long wallsliding
                 if (this.scale.x === -1 && this.wallSliding === true)
                     this.canJump = this.wallSliding = false;
                 if (this.body.velocity.x < Player.maxSpeed) {
@@ -113,9 +97,9 @@ var MegaManX;
                     this.onGround = false;
                 this.canJump = true;
                 this.jumped = false;
-                //If we're touching a wall and we're not on the ground and we're falling
-                //Then we should be wallsliding
-                if ((this.body.touching.left || this.body.touching.right) && this.onGround === false && this.body.velocity.y > 0)
+                if ((this.body.touching.left || this.body.touching.right) &&
+                    this.onGround === false &&
+                    this.body.velocity.y > 0)
                     this.wallSliding = true;
                 else
                     this.wallSliding = false;
@@ -125,21 +109,16 @@ var MegaManX;
             this.teleporting = true;
             this.currentAnimation = this.animations.play('teleportStart');
             this.body.gravity.y = Player.teleportGravity;
-            //this.body.gravity.clampY(0, 150);
-            //start off screen
             this.body.y = 0 - this.currentAnimation.currentFrame.height;
         };
         Player.prototype.updateCurrentAnimation = function () {
             if (this.currentAnimation === undefined)
                 return;
             if (this.currentAnimation.name === 'teleportStart') {
-                //console.log('current animation is teleportStart');
                 if (this.teleporting === true) {
-                    //console.log('we are teleporting. returning out of updateCurrentAnimation');
                     return;
                 }
                 else {
-                    //console.log('we are no long teleporting. stopping teleportStart animation');
                     this.animations.stop(this.currentAnimation.name, true);
                     this.currentAnimation = this.animations.play('teleportFinish');
                     this.body.gravity.y = Player.regularGravity;
@@ -148,55 +127,43 @@ var MegaManX;
             }
             else if (this.currentAnimation.name === 'teleportFinish') {
                 if (this.currentAnimation.isFinished === false) {
-                    //console.log('in teleportFinish animation. returning.');
                     return;
                 }
             }
-            //console.log('current animation is not null: ' + this.currentAnimation.name);
             this.nextAnimation = this.currentAnimation;
             if (this.wallSliding === true) {
                 this.nextAnimation = this.animations.getAnimation('wallSlide');
             }
-            else if (this.body.velocity.y !== 0 || this.jumped === true) {
-                //This isn't techically true, but it'll do for now
-                //this.animations.play('jump');
-                //this.nextAnimation = 'jump';
-                //If we've jumped and our jump animation is done playing and we're falling
-                //Play the in-air animation
-                if (this.currentAnimation.name == 'jumpStart' && this.currentAnimation.isFinished && this.body.velocity.y >= 0) {
+            else if (this.body.onFloor() === false || this.jumped === true) {
+                if (this.currentAnimation.name == 'jumpStart' &&
+                    this.currentAnimation.isFinished &&
+                    this.body.velocity.y >= 0) {
                     this.nextAnimation = this.animations.getAnimation('jumpInAir');
                 }
                 else if (this.body.velocity.y < 0 && this.currentAnimation.name !== 'jumpStart') {
-                    //if we're going up and our animation isn't jump and we jumped
                     this.nextAnimation = this.animations.getAnimation('jumpStart');
                 }
                 else if (this.jumped === false) {
-                    //Regular falling animation goes here.
                     this.nextAnimation = this.animations.getAnimation('jumpInAir');
                 }
             }
             else if (this.body.velocity.x !== 0 && this.jumped === false) {
-                //Wait until our jumpFinish animation is done to move.
-                if (this.currentAnimation.name !== 'jumpFinish' || (this.currentAnimation.name === 'jumpFinish' && this.currentAnimation.isFinished)) {
+                if (this.currentAnimation.name !== 'jumpFinish' ||
+                    (this.currentAnimation.name === 'jumpFinish' && this.currentAnimation.isFinished)) {
                     if (this.body.velocity.x > 0) {
-                        //this.animations.play('run');
                         this.nextAnimation = this.animations.getAnimation('run');
                     }
                     else if (this.body.velocity.x < 0) {
-                        //this.animations.play('run');
                         this.nextAnimation = this.animations.getAnimation('run');
                     }
                 }
             }
             else {
-                //We should be idling.
                 this.nextAnimation = this.animations.getAnimation('idle');
             }
-            //If we JUST got done jumping/falling: play the jumpFinish animation
-            if (this.body.velocity.y === 0 && this.body.deltaY() > 0) {
+            if (this.body.onFloor() && this.body.deltaY() > 0) {
                 this.nextAnimation = this.animations.getAnimation('jumpFinish');
             }
-            //Face the player in the correct direction
             if (this.body.velocity.x > 0 && this.scale.x === -1) {
                 this.scale.x = 1;
             }
@@ -204,9 +171,7 @@ var MegaManX;
                 this.scale.x = -1;
             }
             if (this.nextAnimation.name !== this.currentAnimation.name) {
-                //console.log('stopping animation: ' + this.currentAnimation.name);
                 this.animations.stop(this.currentAnimation.name, true);
-                //console.log('attempting to play new animation: ' + this.nextAnimation.name);
                 this.currentAnimation = this.animations.play(this.nextAnimation.name);
             }
         };
@@ -218,7 +183,6 @@ var MegaManX;
         Player.teleportGravity = 150;
         Player.jumpVelocty = 150;
         return Player;
-    })(Phaser.Sprite);
+    }(Phaser.Sprite));
     MegaManX.Player = Player;
 })(MegaManX || (MegaManX = {}));
-//# sourceMappingURL=Player.js.map

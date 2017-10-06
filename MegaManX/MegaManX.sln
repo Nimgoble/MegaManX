@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Web
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MegaManX", "MegaManX\MegaManX.csproj", "{8A647AFA-375B-495A-A6C2-530266766606}"
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MegaManX", "MegaManX\MegaManX.csproj", "{DA065BBF-1A2A-4468-8A2E-33AF38F748D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8A647AFA-375B-495A-A6C2-530266766606}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8A647AFA-375B-495A-A6C2-530266766606}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8A647AFA-375B-495A-A6C2-530266766606}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8A647AFA-375B-495A-A6C2-530266766606}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA065BBF-1A2A-4468-8A2E-33AF38F748D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA065BBF-1A2A-4468-8A2E-33AF38F748D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA065BBF-1A2A-4468-8A2E-33AF38F748D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA065BBF-1A2A-4468-8A2E-33AF38F748D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

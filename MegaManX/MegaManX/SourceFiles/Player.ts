@@ -39,6 +39,7 @@ module MegaManX
             this.anchor.setTo(0.5, 0.5);
 
             game.physics.enable(this, Phaser.Physics.ARCADE);
+            //game.physics.enable(this, Phaser.Physics.NINJA);
 
             this.body.collideWorldBounds = true;
             //this.body.gravity.x = 0;
@@ -229,7 +230,15 @@ module MegaManX
                 this.nextAnimation = this.animations.getAnimation('wallSlide');
             }
             //Display appropriate animation
-            else if (this.body.velocity.y !== 0 || this.jumped === true)
+            else if
+            (
+                (
+                    this.body.touching.down === false
+                    && this.currentAnimation.name !== 'run' 
+                    && this.body.deltaY() > 1.0
+                )
+                || this.jumped === true
+            )
             {
                 //This isn't techically true, but it'll do for now
                 //this.animations.play('jump');
@@ -279,7 +288,7 @@ module MegaManX
             }
 
             //If we JUST got done jumping/falling: play the jumpFinish animation
-            if (this.body.velocity.y === 0 && this.body.deltaY() > 0)
+            if (this.body.touching.down && this.body.deltaY() > 1.0)
             {
                 this.nextAnimation = this.animations.getAnimation('jumpFinish');
             }
