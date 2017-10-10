@@ -2,8 +2,8 @@ module MegaManX
 {
     export class Player extends Phaser.Sprite
     {
-        currentAnimation: Phaser.Animation;
-        nextAnimation: Phaser.Animation;
+        //currentAnimation: Phaser.Animation;
+        //nextAnimation: Phaser.Animation;
         frameVelocityX: number;
         frameVelocityY: number;
         onGround: boolean;
@@ -17,26 +17,16 @@ module MegaManX
         static regularGravity: number = 7.5;
         static slidingGravity: number = 0.5;
         static teleportGravity: number = 150;
-        static jumpVelocty: number = 150;
+		static jumpVelocty: number = 150;
+
+		animatedSprite: AnimatedSprite;
         
 
 
         constructor(game: Phaser.Game, x: number, y: number)
         {
-            super(game, x, y, 'megamanx', 0);
-
-            this.currentAnimation = this.animations.add('idle', Phaser.Animation.generateFrameNames('idle', 1, 1, '', 4), 1, true);
-            this.animations.add('idleBlink', Phaser.Animation.generateFrameNames('idle', 2, 3, '', 4), 1, true);
-            this.animations.add('run', Phaser.Animation.generateFrameNames('run', 1, 11, '', 4), 25, true);
-            this.animations.add('shoot', Phaser.Animation.generateFrameNames('shoot', 1, 2, '', 4), 30, true);
-            this.animations.add('jumpStart', Phaser.Animation.generateFrameNames('jump', 1, 3, '', 4), 30, false);
-            this.animations.add('jumpInAir', Phaser.Animation.generateFrameNames('jump', 4, 4, '', 4), 15, false);
-            this.animations.add('jumpFinish', Phaser.Animation.generateFrameNames('jump', 5, 7, '', 4), 30, false);
-            //this.animations.add('fall', Phaser.Animation.generateFrameNames('misc', 2, 2, '', 4), 15, false);
-            this.animations.add('wallSlide', Phaser.Animation.generateFrameNames('wallslide', 1, 1, '', 4), 15, false);
-            this.animations.add('teleportStart', Phaser.Animation.generateFrameNames('teleport', 1, 1, '', 4), 15, false);
-            this.animations.add('teleportFinish', Phaser.Animation.generateFrameNames('teleport', 2, 8, '', 4), 30, false);
-            this.anchor.setTo(0.5, 0.5);
+			super(game, x, y, null, 0);
+			this.anchor.setTo(0.5, 0.5);
 
             game.physics.enable(this, Phaser.Physics.ARCADE);
             //game.physics.enable(this, Phaser.Physics.NINJA);
@@ -56,7 +46,22 @@ module MegaManX
             this.wallSliding = false;
             this.teleporting = true;
 
-            game.add.existing(this);
+			game.add.existing(this);
+
+			this.animatedSprite = new AnimatedSprite(game, -0.5, -0.5, 'megamanx', 0);
+			game.add.existing(this.animatedSprite);
+			this.addChild(this.animatedSprite);
+			this.animatedSprite.currentAnimation = this.animatedSprite.animations.add('idle', Phaser.Animation.generateFrameNames('idle', 1, 1, '', 4), 1, true);
+			this.animatedSprite.animations.add('idleBlink', Phaser.Animation.generateFrameNames('idle', 2, 3, '', 4), 1, true);
+			this.animatedSprite.animations.add('run', Phaser.Animation.generateFrameNames('run', 1, 11, '', 4), 25, true);
+			this.animatedSprite.animations.add('shoot', Phaser.Animation.generateFrameNames('shoot', 1, 2, '', 4), 30, true);
+			this.animatedSprite.animations.add('jumpStart', Phaser.Animation.generateFrameNames('jump', 1, 3, '', 4), 30, false);
+			this.animatedSprite.animations.add('jumpInAir', Phaser.Animation.generateFrameNames('jump', 4, 4, '', 4), 15, false);
+			this.animatedSprite.animations.add('jumpFinish', Phaser.Animation.generateFrameNames('jump', 5, 7, '', 4), 30, false);
+			//this.animations.add('fall', Phaser.Animation.generateFrameNames('misc', 2, 2, '', 4), 15, false);
+			this.animatedSprite.animations.add('wallSlide', Phaser.Animation.generateFrameNames('wallslide', 1, 1, '', 4), 15, false);
+			this.animatedSprite.animations.add('teleportStart', Phaser.Animation.generateFrameNames('teleport', 1, 1, '', 4), 15, false);
+			this.animatedSprite.animations.add('teleportFinish', Phaser.Animation.generateFrameNames('teleport', 2, 8, '', 4), 30, false);
         }
 
         create()
@@ -82,7 +87,7 @@ module MegaManX
                 this.body.velocity.y = -Player.jumpVelocty;
                 
                 //Jump away from the wall
-                if (this.currentAnimation.name === 'wallSlide' || this.onGround === false)
+				if (this.animatedSprite.getCurrentAnimationName() === 'wallSlide' || this.onGround === false)
                 {
                     console.log('jump while sliding');
                     this.body.velocity.x = (Player.jumpVelocty * -(this.scale.x));
@@ -97,7 +102,7 @@ module MegaManX
                 this.onGround = false;
             }
 
-            if (this.currentAnimation.name === 'wallSlide')
+			if (this.animatedSprite.getCurrentAnimationName() === 'wallSlide')
             {
                 this.body.gravity.y = Player.slidingGravity;
                 //this.body.velocity.clampY(0, 25.0);
@@ -181,19 +186,20 @@ module MegaManX
         teleportToGround()
         {
             this.teleporting = true;
-            this.currentAnimation = this.animations.play('teleportStart');
+			//this.currentAnimation = this.animations.play('teleportStart');
+			this.animatedSprite.playAnimation('teleportStart');
             this.body.gravity.y = Player.teleportGravity;
             //this.body.gravity.clampY(0, 150);
             //start off screen
-            this.body.y = 0 - this.currentAnimation.currentFrame.height;
+			this.body.y = 0 - this.animatedSprite.currentAnimation.currentFrame.height;
         }
 
         updateCurrentAnimation()
         {
-            if (this.currentAnimation === undefined)
+			if (this.animatedSprite.currentAnimation === undefined)
                 return;
 
-            if (this.currentAnimation.name === 'teleportStart')
+			if (this.animatedSprite.getCurrentAnimationName() === 'teleportStart')
             {
                 //console.log('current animation is teleportStart');
                 if (this.teleporting === true)
@@ -204,16 +210,18 @@ module MegaManX
                 else
                 {
                     //console.log('we are no long teleporting. stopping teleportStart animation');
-                    this.animations.stop(this.currentAnimation.name, true);
-                    this.currentAnimation = this.animations.play('teleportFinish');
+					//this.animations.stop(this.getCurrentAnimationName(), true);
+					this.animatedSprite.stopAnimation(null, true);
+					//this.currentAnimation = this.animations.play('teleportFinish');
+					this.animatedSprite.playAnimation('teleportFinish');
                     this.body.gravity.y = Player.regularGravity;
 
                     return;
                 }
             }
-            else if (this.currentAnimation.name === 'teleportFinish')
+			else if (this.animatedSprite.getCurrentAnimationName() === 'teleportFinish')
             {
-                if (this.currentAnimation.isFinished === false)
+				if (this.animatedSprite.currentAnimation.isFinished === false)
                 {
                     //console.log('in teleportFinish animation. returning.');
                     return;
@@ -222,19 +230,20 @@ module MegaManX
                     //console.log('teleportFinish animation is done.  continuing on.');
             }
 
-            //console.log('current animation is not null: ' + this.currentAnimation.name);
-            this.nextAnimation = this.currentAnimation;
+            //console.log('current animation is not null: ' + this.getCurrentAnimationName());
+			//this.animatedSprite.nextAnimation = this.animatedSprite.currentAnimation;
+			var nextAnimation = 'run';
 
             if (this.wallSliding === true)
             {
-                this.nextAnimation = this.animations.getAnimation('wallSlide');
+				nextAnimation = 'wallSlide';
             }
             //Display appropriate animation
             else if
             (
                 (
                     this.body.touching.down === false
-                    && this.currentAnimation.name !== 'run' 
+					&& this.animatedSprite.getCurrentAnimationName() !== 'run' 
                     && this.body.deltaY() > 1.0
                 )
                 || this.jumped === true
@@ -246,51 +255,51 @@ module MegaManX
 
                 //If we've jumped and our jump animation is done playing and we're falling
                 //Play the in-air animation
-                if (this.currentAnimation.name == 'jumpStart' &&
-                    this.currentAnimation.isFinished &&
+				if (this.animatedSprite.getCurrentAnimationName() == 'jumpStart' &&
+					this.animatedSprite.currentAnimation.isFinished &&
                     this.body.velocity.y >= 0)
                 {
-                    this.nextAnimation = this.animations.getAnimation('jumpInAir');
+                    nextAnimation = 'jumpInAir';
                 }
-                else if (this.body.velocity.y < 0 && this.currentAnimation.name !== 'jumpStart')
+				else if (this.body.velocity.y < 0 && this.animatedSprite.getCurrentAnimationName() !== 'jumpStart')
                 {
                     //if we're going up and our animation isn't jump and we jumped
-                    this.nextAnimation = this.animations.getAnimation('jumpStart');
+                    nextAnimation = 'jumpStart';
                 }
                 else if(this.jumped === false)
                 {
                     //Regular falling animation goes here.
-                    this.nextAnimation = this.animations.getAnimation('jumpInAir');
+                    nextAnimation = 'jumpInAir';
                 }
             }
             else if (this.body.velocity.x !== 0 && this.jumped === false)
             {
                 //Wait until our jumpFinish animation is done to move.
-                if (this.currentAnimation.name !== 'jumpFinish' ||
-                    (this.currentAnimation.name === 'jumpFinish' && this.currentAnimation.isFinished))
+				if (this.animatedSprite.getCurrentAnimationName() !== 'jumpFinish' ||
+					(this.animatedSprite.getCurrentAnimationName() === 'jumpFinish' && this.animatedSprite.currentAnimation.isFinished))
                 {
                     if (this.body.velocity.x > 0)
                     {
                         //this.animations.play('run');
-                        this.nextAnimation = this.animations.getAnimation('run');
+                        nextAnimation = 'run';
                     }
                     else if (this.body.velocity.x < 0)
                     {
                         //this.animations.play('run');
-                        this.nextAnimation = this.animations.getAnimation('run');
+                        nextAnimation = 'run';
                     }
                 }
             }
             else
             {
                 //We should be idling.
-                this.nextAnimation = this.animations.getAnimation('idle');
+                nextAnimation = 'idle';
             }
 
             //If we JUST got done jumping/falling: play the jumpFinish animation
             if (this.body.touching.down && this.body.deltaY() > 1.0)
             {
-                this.nextAnimation = this.animations.getAnimation('jumpFinish');
+                nextAnimation = 'jumpFinish';
             }
 
             //Face the player in the correct direction
@@ -303,13 +312,16 @@ module MegaManX
                 this.scale.x = -1;
             }
 
-            if (this.nextAnimation.name !== this.currentAnimation.name)
+			if (nextAnimation !== this.animatedSprite.getCurrentAnimationName())
             {
-                //console.log('stopping animation: ' + this.currentAnimation.name);
-                this.animations.stop(this.currentAnimation.name, true);
+				//console.log('stopping animation: ' + this.getCurrentAnimationName());
+				this.animatedSprite.stopAnimation(null, true);
+                //this.animations.stop(this.getCurrentAnimationName(), true);
                 //console.log('attempting to play new animation: ' + this.nextAnimation.name);
-                this.currentAnimation = this.animations.play(this.nextAnimation.name);
-                //console.log('current animation after play attempt: ' + this.currentAnimation.name);
+				//this.currentAnimation = this.animations.play(this.nextAnimation.name);
+				this.animatedSprite.playAnimation(nextAnimation);
+                //this.body.setSize(30, 30, 0, 0);
+                //console.log('current animation after play attempt: ' + this.getCurrentAnimationName());
             }
         }
     }

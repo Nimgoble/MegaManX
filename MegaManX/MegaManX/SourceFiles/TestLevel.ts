@@ -89,7 +89,7 @@ module MegaManX
                 //this.game.debug.spriteCollision(this.tiles.getAt(i), 32, 32);
             }
 
-            this.game.debug.text('Current Animation: ' + this.player.currentAnimation.name, 32, 128);
+			this.game.debug.text('Current Animation: ' + this.player.animatedSprite.getCurrentAnimationName(), 32, 128);
             this.game.debug.text('onFloor: ' + this.player.body.onFloor(), 32, 160);
             this.game.debug.text('body.touching.down: ' + this.player.body.touching.down, 32, 192);
 
