@@ -289,7 +289,7 @@ module MegaManX
             (
                 (
                     this.body.touching.down === false
-					&& currentAnimationName === 'run'
+					&& currentAnimationName !== 'run'
                     && this.body.deltaY() > 1.0
                 )
                 || this.jumped === true
@@ -307,7 +307,7 @@ module MegaManX
                 {
                     nextAnimation = 'jumpInAir';
                 }
-				else if (this.body.velocity.y < 0 && currentAnimationName === 'jumpStart')
+				else if (this.body.velocity.y < 0 && currentAnimationName !== 'jumpStart')
                 {
                     //if we're going up and our animation isn't jump and we jumped
                     nextAnimation = 'jumpStart';
@@ -321,7 +321,7 @@ module MegaManX
             else if (this.body.velocity.x !== 0 && this.jumped === false)
             {
                 //Wait until our jumpFinish animation is done to move.
-				if (currentAnimationName === 'jumpFinish' ||
+				if (currentAnimationName !== 'jumpFinish' ||
 					(currentAnimationName === 'jumpFinish' && this.animatedSprite.currentAnimation.isFinished))
                 {
                     if (this.body.velocity.x > 0)
@@ -358,9 +358,9 @@ module MegaManX
                 this.scale.x = -1;
             }
 
-			nextAnimation = this.getAppropriateAnimation(nextAnimation, isShooting);
 			if(nextAnimation !== currentAnimationName)
-            {
+			{
+				nextAnimation = this.getAppropriateAnimation(nextAnimation, isShooting);
 				//console.log('stopping animation: ' + this.getCurrentAnimationName());
 				this.animatedSprite.stopAnimation(null, true);
                 //this.animations.stop(this.getCurrentAnimationName(), true);
@@ -382,23 +382,25 @@ module MegaManX
 					this.currentShootStanceTimeout <= this.game.time.totalElapsedSeconds()
 				)
 					return this.getNonShootAnimation(nextAnimation);
+				else
+					return nextAnimation;
 			}
 			else
 			{
-				if (isShooting)
-				{
-
-				}
+				if (isShooting && this.currentShootStanceTimeout > this.game.time.totalElapsedSeconds())
+					return nextAnimation + 'Shoot';
+				else
+					return nextAnimation;
 			}
 				
 
-			if
-			(
-				!(this.animationHasShootCounterpart(nextAnimation)) ||
-				this.currentShootStanceTimeout <= this.game.time.totalElapsedSeconds()
-			)
-				return nextAnimation;
-			return nextAnimation + 'Shoot';
+			//if
+			//(
+			//	!(this.animationHasShootCounterpart(nextAnimation)) ||
+			//	this.currentShootStanceTimeout <= this.game.time.totalElapsedSeconds()
+			//)
+			//	return nextAnimation;
+			//return nextAnimation + 'Shoot';
 		}
 
 		animationHasShootCounterpart(animation: string)

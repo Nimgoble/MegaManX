@@ -13,6 +13,40 @@ window.onload = function () {
 };
 var MegaManX;
 (function (MegaManX) {
+    var AnimatedSprite = (function (_super) {
+        __extends(AnimatedSprite, _super);
+        function AnimatedSprite(game, x, y, key, frame) {
+            var _this = _super.call(this, game, x, y, key, frame) || this;
+            _this.anchor.setTo(0.5, 0.5);
+            if (_this.body !== null) {
+                _this.body.collideWorldBounds = false;
+                //this.body.gravity.x = 0;
+                _this.body.gravity.y = 0;
+                //this.body.gravity.clampY(0, 5);
+                _this.body.allowGravity = false;
+                //this.body.allowCollision.any = true;
+                _this.body.setSize(30, 30, 0, 0);
+                _this.body.bounce.setTo(0, 0);
+            }
+            return _this;
+        }
+        AnimatedSprite.prototype.playAnimation = function (animation) {
+            this.currentAnimation = this.animations.play(animation);
+        };
+        AnimatedSprite.prototype.stopAnimation = function (animation, resetFrame) {
+            if (animation === null && this.currentAnimation !== null)
+                animation = this.currentAnimation.name;
+            this.animations.stop(animation, resetFrame);
+        };
+        AnimatedSprite.prototype.getCurrentAnimationName = function () {
+            return (this.currentAnimation === null || this.currentAnimation === undefined) ? '' : this.currentAnimation.name;
+        };
+        return AnimatedSprite;
+    }(Phaser.Sprite));
+    MegaManX.AnimatedSprite = AnimatedSprite;
+})(MegaManX || (MegaManX = {}));
+var MegaManX;
+(function (MegaManX) {
     var Boot = (function (_super) {
         __extends(Boot, _super);
         function Boot() {
@@ -313,7 +347,7 @@ var MegaManX;
                 nextAnimation = 'wallSlide';
             }
             else if ((this.body.touching.down === false
-                && currentAnimationName === 'run'
+                && currentAnimationName !== 'run'
                 && this.body.deltaY() > 1.0)
                 || this.jumped === true) {
                 //This isn't techically true, but it'll do for now
@@ -326,7 +360,7 @@ var MegaManX;
                     this.body.velocity.y >= 0) {
                     nextAnimation = 'jumpInAir';
                 }
-                else if (this.body.velocity.y < 0 && currentAnimationName === 'jumpStart') {
+                else if (this.body.velocity.y < 0 && currentAnimationName !== 'jumpStart') {
                     //if we're going up and our animation isn't jump and we jumped
                     nextAnimation = 'jumpStart';
                 }
@@ -337,7 +371,7 @@ var MegaManX;
             }
             else if (this.body.velocity.x !== 0 && this.jumped === false) {
                 //Wait until our jumpFinish animation is done to move.
-                if (currentAnimationName === 'jumpFinish' ||
+                if (currentAnimationName !== 'jumpFinish' ||
                     (currentAnimationName === 'jumpFinish' && this.animatedSprite.currentAnimation.isFinished)) {
                     if (this.body.velocity.x > 0) {
                         //this.animations.play('run');
@@ -364,8 +398,8 @@ var MegaManX;
             else if (this.body.velocity.x < 0 && this.scale.x === 1) {
                 this.scale.x = -1;
             }
-            nextAnimation = this.getAppropriateAnimation(nextAnimation, isShooting);
             if (nextAnimation !== currentAnimationName) {
+                nextAnimation = this.getAppropriateAnimation(nextAnimation, isShooting);
                 //console.log('stopping animation: ' + this.getCurrentAnimationName());
                 this.animatedSprite.stopAnimation(null, true);
                 //this.animations.stop(this.getCurrentAnimationName(), true);
@@ -381,15 +415,22 @@ var MegaManX;
                 if (!isShooting ||
                     this.currentShootStanceTimeout <= this.game.time.totalElapsedSeconds())
                     return this.getNonShootAnimation(nextAnimation);
+                else
+                    return nextAnimation;
             }
             else {
-                if (isShooting) {
-                }
+                if (isShooting && this.currentShootStanceTimeout > this.game.time.totalElapsedSeconds())
+                    return nextAnimation + 'Shoot';
+                else
+                    return nextAnimation;
             }
-            if (!(this.animationHasShootCounterpart(nextAnimation)) ||
-                this.currentShootStanceTimeout <= this.game.time.totalElapsedSeconds())
-                return nextAnimation;
-            return nextAnimation + 'Shoot';
+            //if
+            //(
+            //	!(this.animationHasShootCounterpart(nextAnimation)) ||
+            //	this.currentShootStanceTimeout <= this.game.time.totalElapsedSeconds()
+            //)
+            //	return nextAnimation;
+            //return nextAnimation + 'Shoot';
         };
         Player.prototype.animationHasShootCounterpart = function (animation) {
             return animation.indexOf('jump') >= 0 ||
@@ -448,6 +489,30 @@ var MegaManX;
         return Preloader;
     }(Phaser.State));
     MegaManX.Preloader = Preloader;
+})(MegaManX || (MegaManX = {}));
+var MegaManX;
+(function (MegaManX) {
+    var Projectile = (function (_super) {
+        __extends(Projectile, _super);
+        function Projectile(game, x, y, key, frame, xVelocity, yVelocity) {
+            var _this = _super.call(this, game, x, y, key, frame) || this;
+            game.physics.enable(_this, Phaser.Physics.ARCADE);
+            _this.checkWorldBounds = true;
+            _this.events.onOutOfBounds.add(_this.onOutOfBounds, _this);
+            if (xVelocity !== null)
+                _this.body.velocity.x = xVelocity;
+            if (yVelocity !== null)
+                _this.body.velocity.y = yVelocity;
+            _this.body.allowGravity = false;
+            game.add.existing(_this);
+            return _this;
+        }
+        Projectile.prototype.onOutOfBounds = function (context) {
+            context.destroy();
+        };
+        return Projectile;
+    }(Phaser.Sprite));
+    MegaManX.Projectile = Projectile;
 })(MegaManX || (MegaManX = {}));
 var MegaManX;
 (function (MegaManX) {
@@ -530,63 +595,5 @@ var MegaManX;
         return TestLevel;
     }(Phaser.State));
     MegaManX.TestLevel = TestLevel;
-})(MegaManX || (MegaManX = {}));
-var MegaManX;
-(function (MegaManX) {
-    var AnimatedSprite = (function (_super) {
-        __extends(AnimatedSprite, _super);
-        function AnimatedSprite(game, x, y, key, frame) {
-            var _this = _super.call(this, game, x, y, key, frame) || this;
-            _this.anchor.setTo(0.5, 0.5);
-            if (_this.body !== null) {
-                _this.body.collideWorldBounds = false;
-                //this.body.gravity.x = 0;
-                _this.body.gravity.y = 0;
-                //this.body.gravity.clampY(0, 5);
-                _this.body.allowGravity = false;
-                //this.body.allowCollision.any = true;
-                _this.body.setSize(30, 30, 0, 0);
-                _this.body.bounce.setTo(0, 0);
-            }
-            return _this;
-        }
-        AnimatedSprite.prototype.playAnimation = function (animation) {
-            this.currentAnimation = this.animations.play(animation);
-        };
-        AnimatedSprite.prototype.stopAnimation = function (animation, resetFrame) {
-            if (animation === null && this.currentAnimation !== null)
-                animation = this.currentAnimation.name;
-            this.animations.stop(animation, resetFrame);
-        };
-        AnimatedSprite.prototype.getCurrentAnimationName = function () {
-            return (this.currentAnimation === null || this.currentAnimation === undefined) ? '' : this.currentAnimation.name;
-        };
-        return AnimatedSprite;
-    }(Phaser.Sprite));
-    MegaManX.AnimatedSprite = AnimatedSprite;
-})(MegaManX || (MegaManX = {}));
-var MegaManX;
-(function (MegaManX) {
-    var Projectile = (function (_super) {
-        __extends(Projectile, _super);
-        function Projectile(game, x, y, key, frame, xVelocity, yVelocity) {
-            var _this = _super.call(this, game, x, y, key, frame) || this;
-            game.physics.enable(_this, Phaser.Physics.ARCADE);
-            _this.checkWorldBounds = true;
-            _this.events.onOutOfBounds.add(_this.onOutOfBounds, _this);
-            if (xVelocity !== null)
-                _this.body.velocity.x = xVelocity;
-            if (yVelocity !== null)
-                _this.body.velocity.y = yVelocity;
-            _this.body.allowGravity = false;
-            game.add.existing(_this);
-            return _this;
-        }
-        Projectile.prototype.onOutOfBounds = function (context) {
-            context.destroy();
-        };
-        return Projectile;
-    }(Phaser.Sprite));
-    MegaManX.Projectile = Projectile;
 })(MegaManX || (MegaManX = {}));
 //# sourceMappingURL=megamanx.js.map
