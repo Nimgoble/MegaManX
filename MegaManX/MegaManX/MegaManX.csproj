@@ -37,11 +37,13 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="app.ts" />
+    <TypeScriptCompile Include="SourceFiles\AnimatedSprite.ts" />
     <TypeScriptCompile Include="SourceFiles\Boot.ts" />
     <TypeScriptCompile Include="SourceFiles\Game.ts" />
     <TypeScriptCompile Include="SourceFiles\MainMenu.ts" />
     <TypeScriptCompile Include="SourceFiles\Player.ts" />
     <TypeScriptCompile Include="SourceFiles\Preloader.ts" />
+    <TypeScriptCompile Include="SourceFiles\Projectile.ts" />
     <TypeScriptCompile Include="SourceFiles\TestLevel.ts" />
     <TypeScriptCompile Include="ThirdParty\phaser.d.ts" />
     <TypeScriptCompile Include="ThirdParty\pixi.d.ts" />

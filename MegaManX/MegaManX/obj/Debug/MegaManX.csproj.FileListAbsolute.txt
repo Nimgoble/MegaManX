@@ -5,3 +5,10 @@ F:\Programming\Misc Projects\MegaManX\MegaManX\obj\Debug\MegaManX.dll
 F:\Programming\Misc Projects\MegaManX\MegaManX\obj\Debug\MegaManX.pdb
 F:\Programming\Misc Projects\MegaManX\MegaManX\obj\Debug\MegaManX.csprojResolveAssemblyReference.cache
 F:\Programming\Misc Projects\MegaManX\MegaManX\obj\Debug\MegaManX.csproj.CoreCompileInputs.cache
+F:\Programming\Github\MegaManX\MegaManX\MegaManX\bin\MegaManX.dll.config
+F:\Programming\Github\MegaManX\MegaManX\MegaManX\bin\MegaManX.dll
+F:\Programming\Github\MegaManX\MegaManX\MegaManX\bin\MegaManX.pdb
+F:\Programming\Github\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.csprojResolveAssemblyReference.cache
+F:\Programming\Github\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.csproj.CoreCompileInputs.cache
+F:\Programming\Github\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.dll
+F:\Programming\Github\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.pdb
