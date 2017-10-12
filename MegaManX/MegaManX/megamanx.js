@@ -234,17 +234,20 @@ var MegaManX;
         Player.prototype.shoot = function () {
             //Play animation
             var currentAnimationName = this.animatedSprite.getCurrentAnimationName();
-            if (this.animationHasShootCounterpart(currentAnimationName)) {
-                var resetFrame = !(currentAnimationName.indexOf('jump') >= 0);
-                var newAnimationName = this.animatedSprite.getCurrentAnimationName() + 'Shoot';
-                this.animatedSprite.stopAnimation(null, resetFrame);
-                this.animatedSprite.playAnimation(newAnimationName);
+            var isShooting = this.isShootAnimation(currentAnimationName);
+            if (!isShooting) {
+                if (this.animationHasShootCounterpart(currentAnimationName)) {
+                    var resetFrame = !(currentAnimationName.indexOf('jump') >= 0);
+                    var newAnimationName = this.animatedSprite.getCurrentAnimationName() + 'Shoot';
+                    this.animatedSprite.stopAnimation(null, resetFrame);
+                    this.animatedSprite.playAnimation(newAnimationName);
+                }
+                else
+                    return;
             }
-            else if (this.isShootAnimation(currentAnimationName) === false)
-                return;
             //Create the projectile
             var x = (this.body.x + ((this.body.width / 2) * this.scale.x));
-            var y = this.body.y + (this.body.height / 2);
+            var y = (this.body.y + (this.body.height / 2) - 5);
             var bullet = new MegaManX.Projectile(this.game, x, y, 'megamanx', 1, (750 * this.scale.x), 0);
             bullet.animations.add('default', Phaser.Animation.generateFrameNames('bullet', 1, 5, '', 4), 1, true);
             bullet.animations.play('default');
@@ -398,8 +401,20 @@ var MegaManX;
             else if (this.body.velocity.x < 0 && this.scale.x === 1) {
                 this.scale.x = -1;
             }
+            if (isShooting &&
+                (this.currentShootStanceTimeout <= this.game.time.totalElapsedSeconds()) &&
+                (this.isShootAnimation(nextAnimation) ||
+                    nextAnimation === currentAnimationName)) {
+                nextAnimation = this.getNonShootAnimation(nextAnimation);
+                currentAnimationName = this.animatedSprite.getCurrentAnimationName();
+            }
             if (nextAnimation !== currentAnimationName) {
                 nextAnimation = this.getAppropriateAnimation(nextAnimation, isShooting);
+                if (nextAnimation === '') {
+                    var stopHere = 1;
+                    var anotherStopHere = 'We should stop here';
+                    nextAnimation = 'WHYISTHISLIKETHIS?!';
+                }
                 //console.log('stopping animation: ' + this.getCurrentAnimationName());
                 this.animatedSprite.stopAnimation(null, true);
                 //this.animations.stop(this.getCurrentAnimationName(), true);
