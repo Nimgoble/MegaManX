@@ -48,19 +48,43 @@ module MegaManX
             this.player.teleportToGround();
 
             this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN]);
-        }
+		}
 
         update()
-        {
+		{
+			var index = 0;
+			var castedGame = (this.game as Game);
+			while (index < castedGame.projectiles.length) {
+				var projectile = castedGame.projectiles[index];
+				if (projectile === null || projectile.isDead) {
+					castedGame.removeProjectile(projectile);
+				}
+				else
+					index++;
+			}
+
             //this.game.physics.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
 			//console.log("player y velocity before physics collide: " + this.player.body.velocity.y);
             //this.game.physics.arcade.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
-            this.game.physics.arcade.collide(this.tiles, this.player, this.player.collisionCallback, null, this.player);
+			this.game.physics.arcade.collide(this.tiles, this.player, this.player.collisionCallback, null, this.player);
+			for (var i = 0; i < castedGame.projectiles.length; ++i)
+			{
+				var projectile = castedGame.projectiles[i];
+				this.game.physics.arcade.collide(this.tiles, projectile, projectile.collisionCallback, null, projectile);
+			}
+
+			for (var i = 0; i < castedGame.projectiles.length; ++i)
+			{
+				var projectile = castedGame.projectiles[i];
+				if (projectile.isDead)
+					projectile.destroy();
+			}
+			
             //this.game.physics.ninja.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
 			//console.log("player y velocity after physics collide: " + this.player.body.velocity.y);
 			//this.game.debug.body(this.player);
             this.player.updateCurrentAnimation();
-        }
+		}
 
         render()
         {

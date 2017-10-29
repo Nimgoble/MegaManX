@@ -14,6 +14,8 @@ module MegaManX
 		animatedSprite: AnimatedSprite;
 		nextShootTime: number;
 		currentShootStanceTimeout: number;
+		shootSound: Phaser.Sound;
+		healthBar: HealthBar;
 
         static airMovementSpeed: number = 15;
         static landMovementSpeed: number = 50;
@@ -30,7 +32,10 @@ module MegaManX
 			this.nextShootTime = 0.0;
 			this.currentShootStanceTimeout = 0.0;
 
-            game.physics.enable(this, Phaser.Physics.ARCADE);
+			game.physics.enable(this, Phaser.Physics.ARCADE);
+			this.shootSound = game.add.audio('shoot');
+			this.shootSound.allowMultiple = true;
+			//this.shootSound.addMarker('shoot', 0.75, 1.0);
             //game.physics.enable(this, Phaser.Physics.NINJA);
 
             this.body.collideWorldBounds = true;
@@ -69,6 +74,9 @@ module MegaManX
 			this.animatedSprite.animations.add('wallSlideShoot', Phaser.Animation.generateFrameNames('wallslideshoot', 1, 2, '', 4), 15, false);
 			this.animatedSprite.animations.add('teleportStart', Phaser.Animation.generateFrameNames('teleport', 1, 1, '', 4), 15, false);
 			this.animatedSprite.animations.add('teleportFinish', Phaser.Animation.generateFrameNames('teleport', 2, 8, '', 4), 30, false);
+
+			this.healthBar = new HealthBar(game, 0, 50, null, null, 25, 10);
+			game.add.existing(this.healthBar);
         }
 
         create()
@@ -155,9 +163,13 @@ module MegaManX
 			//Create the projectile
 			var x = (this.body.x + ((this.body.width / 2) * this.scale.x)) ;
 			var y = (this.body.y + (this.body.height / 2) - 5);
-			var bullet = new Projectile(this.game, x, y, 'megamanx', 1, (750 * this.scale.x), 0);
-			bullet.animations.add('default', Phaser.Animation.generateFrameNames('bullet', 1, 5, '', 4), 1, true);
+			var bullet = new Projectile(this.game, x, y, 'player_shoot', 1, (750 * this.scale.x), 0);
+			var convertedGame = (this.game as Game).addProjectile(bullet);
+			bullet.animations.add('default', Phaser.Animation.generateFrameNames('bullet', 1, 1, '', 4), 1, false);
+			bullet.animations.add('death', Phaser.Animation.generateFrameNames('bullet', 2, 3, '', 4), 30, true);
+			bullet.deathAnimation = 'death';
 			bullet.animations.play('default');
+			this.shootSound.play();
 			
 			//Update next shoot time
 			this.nextShootTime = this.game.time.totalElapsedSeconds() + 0.25;

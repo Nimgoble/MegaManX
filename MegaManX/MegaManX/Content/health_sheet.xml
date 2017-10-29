@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagepath="health_sheet.png">
+	<SubTexture name="health_piece_full" x="0" y="22" width="14" height="2" />
+	<SubTexture name="health_piece_empty" x="0" y="25" width="14" height="2" />
+	<SubTexture name="health_top" x="0" y="17" width="14" height="4" />
+	<SubTexture name="health_bottom" x="0" y="0" width="14" height="16" />
+</TextureAtlas>

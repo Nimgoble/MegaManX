@@ -1,0 +1,60 @@
+﻿{"frames": [
+
+{
+	"filename": "health_top",
+	"frame": {"x":0,"y":0,"w":14,"h":4},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":14,"h":4},
+	"sourceSize": {"w":14,"h":4}
+},
+	{
+		"filename": "health_bottom",
+		"frame":
+		{
+			"x": 0,
+			"y": 9,
+			"w": 14,
+			"h": 16
+		},
+		"rotated": false,
+		"trimmed": false,
+		"spriteSourceSize":
+		{
+			"x": 0,
+			"y": 0,
+			"w": 14,
+			"h": 16
+		},
+		"sourceSize":
+		{
+			"w": 14,
+			"h": 16
+		}
+	},
+{
+	"filename": "health_piece_full",
+	"frame": {"x":0,"y":30,"w":14,"h":2},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":14,"h":2},
+	"sourceSize": {"w":14,"h":2}
+},
+{
+	"filename": "health_piece_empty",
+	"frame": {"x":0,"y":37,"w":14,"h":2},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":14,"h":2},
+	"sourceSize": {"w":14,"h":2}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "health_sheet.png",
+	"format": "RGBA8888",
+	"size": {"w":14,"h":39},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e64d55a03d005929936041c8033a2384:c8a167b520d279f97d744ad621bad2d3:aa55258d56d0b215ddda9a07b8c58a50$"
+}
+}

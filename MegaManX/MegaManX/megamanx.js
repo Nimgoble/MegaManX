@@ -87,8 +87,18 @@ var MegaManX;
             _this.state.add('TestLevel', MegaManX.TestLevel, false);
             //this.state.add('Level1', Level1, false);
             _this.state.start('Boot');
+            _this.projectiles = [];
             return _this;
         }
+        Game.prototype.addProjectile = function (projectile) {
+            this.projectiles.push(projectile);
+        };
+        Game.prototype.removeProjectile = function (projectile) {
+            var index = this.projectiles.indexOf(projectile);
+            if (index !== -1) {
+                this.projectiles.splice(index, 1);
+            }
+        };
         return Game;
     }(Phaser.Game));
     MegaManX.Game = Game;
@@ -151,6 +161,9 @@ var MegaManX;
             _this.nextShootTime = 0.0;
             _this.currentShootStanceTimeout = 0.0;
             game.physics.enable(_this, Phaser.Physics.ARCADE);
+            _this.shootSound = game.add.audio('shoot');
+            _this.shootSound.allowMultiple = true;
+            //this.shootSound.addMarker('shoot', 0.75, 1.0);
             //game.physics.enable(this, Phaser.Physics.NINJA);
             _this.body.collideWorldBounds = true;
             //this.body.gravity.x = 0;
@@ -185,6 +198,8 @@ var MegaManX;
             _this.animatedSprite.animations.add('wallSlideShoot', Phaser.Animation.generateFrameNames('wallslideshoot', 1, 2, '', 4), 15, false);
             _this.animatedSprite.animations.add('teleportStart', Phaser.Animation.generateFrameNames('teleport', 1, 1, '', 4), 15, false);
             _this.animatedSprite.animations.add('teleportFinish', Phaser.Animation.generateFrameNames('teleport', 2, 8, '', 4), 30, false);
+            _this.healthBar = new MegaManX.HealthBar(game, 0, 50, null, null, 25, 10);
+            game.add.existing(_this.healthBar);
             return _this;
         }
         Player.prototype.create = function () {
@@ -248,9 +263,13 @@ var MegaManX;
             //Create the projectile
             var x = (this.body.x + ((this.body.width / 2) * this.scale.x));
             var y = (this.body.y + (this.body.height / 2) - 5);
-            var bullet = new MegaManX.Projectile(this.game, x, y, 'megamanx', 1, (750 * this.scale.x), 0);
-            bullet.animations.add('default', Phaser.Animation.generateFrameNames('bullet', 1, 5, '', 4), 1, true);
+            var bullet = new MegaManX.Projectile(this.game, x, y, 'player_shoot', 1, (750 * this.scale.x), 0);
+            var convertedGame = this.game.addProjectile(bullet);
+            bullet.animations.add('default', Phaser.Animation.generateFrameNames('bullet', 1, 1, '', 4), 1, false);
+            bullet.animations.add('death', Phaser.Animation.generateFrameNames('bullet', 2, 3, '', 4), 30, true);
+            bullet.deathAnimation = 'death';
             bullet.animations.play('default');
+            this.shootSound.play();
             //Update next shoot time
             this.nextShootTime = this.game.time.totalElapsedSeconds() + 0.25;
             this.currentShootStanceTimeout = this.game.time.totalElapsedSeconds() + 0.75;
@@ -484,15 +503,26 @@ var MegaManX;
             //  Load our actual games assets
             this.load.image('mainmenu', 'Content/mainmenu.jpg');
             this.load.atlasXML('megamanx', 'Content/megamanx_base.png', 'Content/megamanx_base.xml', null);
+            this.load.atlasXML('player_shoot', 'Content/shoot_sheet.png', 'Content/shoot_sheet.xml', null);
+            //this.healthLoader = this.load.atlasXML('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.json');
+            //			this.healthLoader = this.load.atlasJSONArray('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.json');
+            this.load.image('health_top', 'Content/health_top.png');
+            this.load.image('health_bottom', 'Content/health_bottom.png');
+            this.load.image('health_piece_empty', 'Content/health_piece_empty.png');
+            this.load.image('health_piece_full', 'Content/health_piece_full.png');
             this.load.image('genericTile', 'Content/testTile.png');
             //this.load.spritesheet('button', 'Content/button.png', 185, 52, 3);
             //this.load.image('logo', 'assets/logo.png');
             //this.load.audio('music', 'assets/title.mp3', true);
             //this.load.spritesheet('simon', 'assets/simon.png', 58, 96, 5);
             //this.load.image('level1', 'assets/level1.png');
+            this.load.audio('shoot', 'Content/Sounds/MMX00 - Shoot.wav');
+            this.load.audio('jumpLand1', 'Content/Sounds/MMX05 - Jump Land 1.wav');
+            this.load.audio('jumpLand2', 'Content/Sounds/MMX06 - Jump Land 2.wav');
+            //this.load.audiosprite('shoot', 'Content/Sounds/mmx_sfx.mp3', 'Content/Sounds/sounds.json');
         };
         Preloader.prototype.create = function () {
-            var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
+            var tween = this.add.tween(this.preloadBar).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true);
             tween.onComplete.add(this.startMainMenu, this);
         };
         Preloader.prototype.startMainMenu = function () {
@@ -511,6 +541,8 @@ var MegaManX;
         __extends(Projectile, _super);
         function Projectile(game, x, y, key, frame, xVelocity, yVelocity) {
             var _this = _super.call(this, game, x, y, key, frame) || this;
+            _this.isDying = false;
+            _this.isDead = false;
             game.physics.enable(_this, Phaser.Physics.ARCADE);
             _this.checkWorldBounds = true;
             _this.events.onOutOfBounds.add(_this.onOutOfBounds, _this);
@@ -522,6 +554,18 @@ var MegaManX;
             game.add.existing(_this);
             return _this;
         }
+        Projectile.prototype.collisionCallback = function (obj1, obj2) {
+            if (this.isDead || this.isDying)
+                return;
+            this.isDying = true;
+            if (this.deathAnimation !== '')
+                this.animations.play(this.deathAnimation, null, false, true);
+        };
+        Projectile.prototype.update = function () {
+            if (this.isDying && this.animations.currentAnim.isFinished && !this.isDead) {
+                this.isDead = true;
+            }
+        };
         Projectile.prototype.onOutOfBounds = function (context) {
             context.destroy();
         };
@@ -572,10 +616,29 @@ var MegaManX;
             this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN]);
         };
         TestLevel.prototype.update = function () {
+            var index = 0;
+            var castedGame = this.game;
+            while (index < castedGame.projectiles.length) {
+                var projectile = castedGame.projectiles[index];
+                if (projectile === null || projectile.isDead) {
+                    castedGame.removeProjectile(projectile);
+                }
+                else
+                    index++;
+            }
             //this.game.physics.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
             //console.log("player y velocity before physics collide: " + this.player.body.velocity.y);
             //this.game.physics.arcade.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
             this.game.physics.arcade.collide(this.tiles, this.player, this.player.collisionCallback, null, this.player);
+            for (var i = 0; i < castedGame.projectiles.length; ++i) {
+                var projectile = castedGame.projectiles[i];
+                this.game.physics.arcade.collide(this.tiles, projectile, projectile.collisionCallback, null, projectile);
+            }
+            for (var i = 0; i < castedGame.projectiles.length; ++i) {
+                var projectile = castedGame.projectiles[i];
+                if (projectile.isDead)
+                    projectile.destroy();
+            }
             //this.game.physics.ninja.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
             //console.log("player y velocity after physics collide: " + this.player.body.velocity.y);
             //this.game.debug.body(this.player);
@@ -610,5 +673,30 @@ var MegaManX;
         return TestLevel;
     }(Phaser.State));
     MegaManX.TestLevel = TestLevel;
+})(MegaManX || (MegaManX = {}));
+var MegaManX;
+(function (MegaManX) {
+    var HealthBar = (function (_super) {
+        __extends(HealthBar, _super);
+        function HealthBar(game, x, y, key, frame, maxHealth, currentHealth) {
+            var _this = _super.call(this, game, x, y, key, frame) || this;
+            _this.health_slots = [];
+            //this.health_top = this.game.add.sprite(x, y, 'health_ui', 'health_top');
+            _this.health_top = _this.game.add.sprite(x, y, 'health_top');
+            var stop = (maxHealth == null ? 25 : maxHealth);
+            y += _this.health_top.height;
+            for (var i = 0; i < stop; ++i) {
+                //var health_item = this.game.add.sprite(x, y, 'health_ui', 'health_piece_full');
+                var health_item = _this.game.add.sprite(x, y, 'health_piece_full');
+                _this.health_slots.push(health_item);
+                y += health_item.height;
+            }
+            //this.health_bottom = this.game.add.sprite(x, y, 'health_ui', 'health_bottom');
+            _this.health_bottom = _this.game.add.sprite(x, y, 'health_bottom');
+            return _this;
+        }
+        return HealthBar;
+    }(Phaser.Sprite));
+    MegaManX.HealthBar = HealthBar;
 })(MegaManX || (MegaManX = {}));
 //# sourceMappingURL=megamanx.js.map

@@ -11,3 +11,11 @@ F:\Programming\Github\MegaManX\MegaManX\MegaManX\bin\MegaManX.pdb
 F:\Programming\Github\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.csproj.CoreCompileInputs.cache
 F:\Programming\Github\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.dll
 F:\Programming\Github\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.pdb
+D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.dll.config
+D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.dll
+D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\bin\MegaManX.pdb
+D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.csprojResolveAssemblyReference.cache
+D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.dll
+D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\obj\Debug\MegaManX.pdb
+D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\bin\Content\shoot_sheet.png
+D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\bin\Content\shoot_sheet.xml

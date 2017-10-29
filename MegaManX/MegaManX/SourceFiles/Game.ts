@@ -1,7 +1,9 @@
 module MegaManX
 {
     export class Game extends Phaser.Game
-    {
+	{
+		projectiles: Projectile[];
+
         constructor()
         {
             //TODO: Change to Phaser.AUTO
@@ -14,7 +16,22 @@ module MegaManX
 
             //this.state.add('Level1', Level1, false);
 
-            this.state.start('Boot');
-        }
+			this.state.start('Boot');
+			this.projectiles = [];
+		}
+
+		addProjectile(projectile: Projectile)
+		{
+			this.projectiles.push(projectile);
+		}
+
+		removeProjectile(projectile: Projectile)
+		{
+			const index: number = this.projectiles.indexOf(projectile);
+			if (index !== -1)
+			{
+				this.projectiles.splice(index, 1);
+			} 
+		}
     }
 } 

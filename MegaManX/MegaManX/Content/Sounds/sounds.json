@@ -1,0 +1,9 @@
+﻿{
+	"spritemap": {
+		"shoot": {
+			"start": 0.5,
+			"end": 1.5,
+			"loop": false
+		}
+	}
+}

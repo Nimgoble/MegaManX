@@ -24,14 +24,27 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.css" />
+    <Content Include="Content\health_sheet.png" />
+    <Content Include="Content\health_sheet.xml" />
     <Content Include="Content\loader.png" />
     <Content Include="Content\mainmenu.jpg" />
     <Content Include="Content\MegamanX.png" />
     <Content Include="Content\MegaManX_ALL.png" />
     <Content Include="Content\megamanx_base.png" />
     <Content Include="Content\megamanx_base.xml" />
+    <Content Include="Content\shoot_sheet.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\shoot_sheet.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Sounds\MMX00 - Shoot.wav" />
+    <Content Include="Content\Sounds\MMX05 - Jump Land 1.wav" />
+    <Content Include="Content\Sounds\MMX06 - Jump Land 2.wav" />
+    <Content Include="Content\Sounds\mmx_sfx.mp3" />
     <Content Include="index.html" />
     <Content Include="ThirdParty\phaser.js" />
+    <Content Include="ThirdParty\phaser.map" />
     <Content Include="ThirdParty\phaser.min.js" />
     <Content Include="web.config" />
   </ItemGroup>
@@ -40,16 +53,19 @@
     <TypeScriptCompile Include="SourceFiles\AnimatedSprite.ts" />
     <TypeScriptCompile Include="SourceFiles\Boot.ts" />
     <TypeScriptCompile Include="SourceFiles\Game.ts" />
+    <TypeScriptCompile Include="SourceFiles\HealthBar.ts" />
     <TypeScriptCompile Include="SourceFiles\MainMenu.ts" />
     <TypeScriptCompile Include="SourceFiles\Player.ts" />
     <TypeScriptCompile Include="SourceFiles\Preloader.ts" />
     <TypeScriptCompile Include="SourceFiles\Projectile.ts" />
     <TypeScriptCompile Include="SourceFiles\TestLevel.ts" />
+    <TypeScriptCompile Include="ThirdParty\p2.d.ts" />
     <TypeScriptCompile Include="ThirdParty\phaser.d.ts" />
     <TypeScriptCompile Include="ThirdParty\pixi.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ThirdParty\phaser.map" />
+    <Content Include="Content\Sounds\sounds.json" />
+    <Content Include="Content\health_sheet.json" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
