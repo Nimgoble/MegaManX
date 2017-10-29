@@ -165,7 +165,7 @@ var MegaManX;
             _this.shootSound.allowMultiple = true;
             //this.shootSound.addMarker('shoot', 0.75, 1.0);
             //game.physics.enable(this, Phaser.Physics.NINJA);
-            _this.body.collideWorldBounds = true;
+            _this.body.collideWorldBounds = false;
             //this.body.gravity.x = 0;
             _this.body.gravity.y = Player.regularGravity;
             //this.body.gravity.clampY(0, 5);
@@ -581,12 +581,13 @@ var MegaManX;
             return _super !== null && _super.apply(this, arguments) || this;
         }
         TestLevel.prototype.create = function () {
+            this.game.world.setBounds(0, 0, 1920, 1920);
             this.tiles = this.game.add.group();
             this.tiles.enableBody = true;
             this.tiles.physicsBodyType = Phaser.Physics.ARCADE;
             //this.tiles.physicsBodyType = Phaser.Physics.NINJA;
             //Floor
-            var tileSprite = this.game.add.tileSprite(0, 352, (20 * 32), 32, 'genericTile', null, this.tiles);
+            var tileSprite = this.game.add.tileSprite(0, 352, (50 * 32), 32, 'genericTile', null, this.tiles);
             tileSprite.body.immovable = true;
             tileSprite.body.collideWorldBounds = false;
             tileSprite.body.allowGravity = false;
@@ -611,7 +612,7 @@ var MegaManX;
             }
             this.slope.angle = -15;
             this.player = new MegaManX.Player(this.game, 64, 0);
-            this.camera.follow(this.player);
+            this.game.camera.follow(this.player);
             this.player.teleportToGround();
             this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN]);
         };
@@ -681,18 +682,23 @@ var MegaManX;
         function HealthBar(game, x, y, key, frame, maxHealth, currentHealth) {
             var _this = _super.call(this, game, x, y, key, frame) || this;
             _this.health_slots = [];
+            _this.group = game.add.group();
             //this.health_top = this.game.add.sprite(x, y, 'health_ui', 'health_top');
             _this.health_top = _this.game.add.sprite(x, y, 'health_top');
+            _this.group.add(_this.health_top);
             var stop = (maxHealth == null ? 25 : maxHealth);
             y += _this.health_top.height;
             for (var i = 0; i < stop; ++i) {
                 //var health_item = this.game.add.sprite(x, y, 'health_ui', 'health_piece_full');
                 var health_item = _this.game.add.sprite(x, y, 'health_piece_full');
-                _this.health_slots.push(health_item);
+                //this.health_slots.push(health_item);
+                _this.group.add(health_item);
                 y += health_item.height;
             }
             //this.health_bottom = this.game.add.sprite(x, y, 'health_ui', 'health_bottom');
             _this.health_bottom = _this.game.add.sprite(x, y, 'health_bottom');
+            _this.group.add(_this.health_bottom);
+            _this.group.fixedToCamera = true;
             return _this;
         }
         return HealthBar;

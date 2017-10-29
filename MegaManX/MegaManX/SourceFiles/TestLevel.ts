@@ -8,14 +8,15 @@ module MegaManX
         slope: Phaser.Group;
 
         create()
-        {
+		{
+			this.game.world.setBounds(0, 0, 1920, 1920);
             this.tiles = this.game.add.group();
             this.tiles.enableBody = true;
             this.tiles.physicsBodyType = Phaser.Physics.ARCADE;
             //this.tiles.physicsBodyType = Phaser.Physics.NINJA;
 
             //Floor
-            var tileSprite = this.game.add.tileSprite(0, 352, (20 * 32), 32, 'genericTile', null, this.tiles);
+            var tileSprite = this.game.add.tileSprite(0, 352, (50 * 32), 32, 'genericTile', null, this.tiles);
             tileSprite.body.immovable = true;
             tileSprite.body.collideWorldBounds = false;
             tileSprite.body.allowGravity = false;
@@ -44,7 +45,7 @@ module MegaManX
 
             this.player = new MegaManX.Player(this.game, 64, 0);
 
-            this.camera.follow(this.player);
+            this.game.camera.follow(this.player);
             this.player.teleportToGround();
 
             this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN]);

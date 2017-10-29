@@ -38,7 +38,7 @@ module MegaManX
 			//this.shootSound.addMarker('shoot', 0.75, 1.0);
             //game.physics.enable(this, Phaser.Physics.NINJA);
 
-            this.body.collideWorldBounds = true;
+            this.body.collideWorldBounds = false;
             //this.body.gravity.x = 0;
             this.body.gravity.y = Player.regularGravity;
             //this.body.gravity.clampY(0, 5);

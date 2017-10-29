@@ -12,19 +12,24 @@
 		{
 			super(game, x, y, key, frame);
 			this.health_slots = [];
+			this.group = game.add.group();
 			//this.health_top = this.game.add.sprite(x, y, 'health_ui', 'health_top');
 			this.health_top = this.game.add.sprite(x, y, 'health_top');
+			this.group.add(this.health_top);
 			var stop = (maxHealth == null ? 25 : maxHealth);
 			y += this.health_top.height;
 			for (var i = 0; i < stop; ++i)
 			{
 				//var health_item = this.game.add.sprite(x, y, 'health_ui', 'health_piece_full');
 				var health_item = this.game.add.sprite(x, y, 'health_piece_full');
-				this.health_slots.push(health_item);
+				//this.health_slots.push(health_item);
+				this.group.add(health_item);
 				y += health_item.height;
 			}
 			//this.health_bottom = this.game.add.sprite(x, y, 'health_ui', 'health_bottom');
 			this.health_bottom = this.game.add.sprite(x, y, 'health_bottom');
+			this.group.add(this.health_bottom);
+			this.group.fixedToCamera = true;
 		}
 	}
 }
