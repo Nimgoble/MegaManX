@@ -1,0 +1,28 @@
+<textureatlas imagepath="shoot_sheet.png">
+	<subtexture name="bullet0000" x="74" y="106" width="8" height="6"/>
+	<subtexture name="bullet0001" x="54" y="83" width="12" height="12"/>
+	<subtexture name="bullet0002" x="27" y="31" width="13" height="13"/>
+	<subtexture name="bullet0003" x="27" y="15" width="15" height="15"/>
+	<subtexture name="large0000" x="74" y="113" width="14" height="20"/>
+	<subtexture name="large00001" x="44" y="25" width="23" height="16"/>
+	<subtexture name="large0002" x="98" y="73" width="32" height="32"/>
+	<subtexture name="large0003" x="0" y="106" width="40" height="32"/>
+	<subtexture name="large0004" x="69" y="54" width="27" height="24"/>
+	<subtexture name="large0005" x="69" y="0" width="28" height="28"/>
+	<subtexture name="large0006" x="0" y="23" width="26" height="26"/>
+	<subtexture name="large0007" x="98" y="42" width="30" height="30"/>
+	<subtexture name="large0008" x="41" y="106" width="32" height="32"/>
+	<subtexture name="large0009" x="98" y="0" width="32" height="32"/>
+	<subtexture name="medium0000" x="27" y="0" width="16" height="14"/>
+	<subtexture name="medium0001" x="69" y="79" width="24" height="24"/>
+	<subtexture name="medium0002" x="0" y="70" width="28" height="12"/>
+	<subtexture name="medium0003" x="98" y="33" width="32" height="8"/>
+	<subtexture name="medium0004" x="0" y="50" width="40" height="19"/>
+	<subtexture name="medium0005" x="0" y="83" width="36" height="22"/>
+	<subtexture name="medium0006" x="29" y="70" width="38" height="12"/>
+	<subtexture name="medium0007" x="37" y="83" width="16" height="16"/>
+	<subtexture name="medium0008" x="69" y="29" width="24" height="24"/>
+	<subtexture name="medium0009" x="0" y="0" width="22" height="22"/>
+	<subtexture name="medium0010" x="44" y="42" width="24" height="24"/>
+	<subtexture name="medium0011" x="44" y="0" width="24" height="24"/>
+</textureatlas>

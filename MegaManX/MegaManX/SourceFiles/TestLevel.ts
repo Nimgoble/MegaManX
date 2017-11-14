@@ -57,7 +57,9 @@ module MegaManX
 			var castedGame = (this.game as Game);
 			while (index < castedGame.projectiles.length) {
 				var projectile = castedGame.projectiles[index];
-				if (projectile === null || projectile.isDead) {
+				if (projectile === null || projectile.isDead)
+				{
+					projectile.destroy();
 					castedGame.removeProjectile(projectile);
 				}
 				else
@@ -78,7 +80,10 @@ module MegaManX
 			{
 				var projectile = castedGame.projectiles[i];
 				if (projectile.isDead)
+				{
 					projectile.destroy();
+					castedGame.removeProjectile(projectile);
+				}
 			}
 			
             //this.game.physics.ninja.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
@@ -115,8 +120,8 @@ module MegaManX
             }
 
 			this.game.debug.text('Current Animation: ' + this.player.animatedSprite.getCurrentAnimationName(), 32, 128);
-            this.game.debug.text('onFloor: ' + this.player.body.onFloor(), 32, 160);
-            this.game.debug.text('body.touching.down: ' + this.player.body.touching.down, 32, 192);
+			this.game.debug.text('onFloor: ' + this.player.body.onFloor(), 32, 160);
+			this.game.debug.text('shot charge: ' + this.player.shotCharge, 32, 192);
 
             //this.game.debug.renderQuadTree(this.game.physics.quadTree);
         }

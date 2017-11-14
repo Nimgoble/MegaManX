@@ -52,3 +52,5 @@ D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\megamanx.js
 D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\megamanx.js.map
 D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\megamanx.js
 D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\megamanx.js.map
+D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\megamanx.js
+D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\megamanx.js.map

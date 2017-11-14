@@ -32,13 +32,13 @@
     <Content Include="Content\MegaManX_ALL.png" />
     <Content Include="Content\megamanx_base.png" />
     <Content Include="Content\megamanx_base.xml" />
-    <Content Include="Content\shoot_sheet.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\shoot_sheet.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Content\shoot_sheet2.png" />
+    <Content Include="Content\shoot_sheet2.xml" />
     <Content Include="Content\Sounds\MMX00 - Shoot.wav" />
+    <Content Include="Content\Sounds\MMX02 - Charge Start.wav" />
+    <Content Include="Content\Sounds\MMX02A - Charge Loop.wav" />
+    <Content Include="Content\Sounds\MMX03 - Charged Shot Small.wav" />
+    <Content Include="Content\Sounds\MMX04 - Charged Shot Big.wav" />
     <Content Include="Content\Sounds\MMX05 - Jump Land 1.wav" />
     <Content Include="Content\Sounds\MMX06 - Jump Land 2.wav" />
     <Content Include="Content\Sounds\mmx_sfx.mp3" />
@@ -51,6 +51,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="app.ts" />
     <TypeScriptCompile Include="SourceFiles\AnimatedSprite.ts" />
+    <TypeScriptCompile Include="SourceFiles\AnimationArguments.ts" />
     <TypeScriptCompile Include="SourceFiles\Boot.ts" />
     <TypeScriptCompile Include="SourceFiles\Game.ts" />
     <TypeScriptCompile Include="SourceFiles\HealthBar.ts" />
@@ -58,6 +59,7 @@
     <TypeScriptCompile Include="SourceFiles\Player.ts" />
     <TypeScriptCompile Include="SourceFiles\Preloader.ts" />
     <TypeScriptCompile Include="SourceFiles\Projectile.ts" />
+    <TypeScriptCompile Include="SourceFiles\ProjectileDefinition.ts" />
     <TypeScriptCompile Include="SourceFiles\TestLevel.ts" />
     <TypeScriptCompile Include="ThirdParty\p2.d.ts" />
     <TypeScriptCompile Include="ThirdParty\phaser.d.ts" />
@@ -100,9 +102,9 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <TypeScriptRemoveComments>false</TypeScriptRemoveComments>
-    <TypeScriptSourceMap>true</TypeScriptSourceMap>
-    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptTarget>ES2015</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
     <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
     <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>

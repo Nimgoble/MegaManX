@@ -14,7 +14,7 @@ module MegaManX
             //  Load our actual games assets
             this.load.image('mainmenu', 'Content/mainmenu.jpg');
 			this.load.atlasXML('megamanx', 'Content/megamanx_base.png', 'Content/megamanx_base.xml', null);
-			this.load.atlasXML('player_shoot', 'Content/shoot_sheet.png', 'Content/shoot_sheet.xml', null);
+			this.load.atlasXML('player_shoot', 'Content/shoot_sheet2.png', 'Content/shoot_sheet2.xml', null);
 			//this.healthLoader = this.load.atlasXML('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.json');
 //			this.healthLoader = this.load.atlasJSONArray('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.json');
 			this.load.image('health_top', 'Content/health_top.png');
@@ -30,6 +30,10 @@ module MegaManX
 			this.load.audio('shoot', 'Content/Sounds/MMX00 - Shoot.wav');
 			this.load.audio('jumpLand1', 'Content/Sounds/MMX05 - Jump Land 1.wav');
 			this.load.audio('jumpLand2', 'Content/Sounds/MMX06 - Jump Land 2.wav');
+			this.load.audio('shotCharge_Start', 'Content/Sounds/MMX02 - Charge Start.wav');
+			this.load.audio('shotCharge_Loop', 'Content/Sounds/MMX02A - Charge Loop.wav');
+			this.load.audio('shot_Medium', 'Content/Sounds/MMX03 - Charged Shot Small.wav');
+			this.load.audio('shot_Large', 'Content/Sounds/MMX04 - Charged Shot Big.wav');
 			//this.load.audiosprite('shoot', 'Content/Sounds/mmx_sfx.mp3', 'Content/Sounds/sounds.json');
         }
 

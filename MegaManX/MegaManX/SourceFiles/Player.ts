@@ -1,7 +1,14 @@
 module MegaManX 
 {
+	enum ShootTypes 
+	{
+		Regular = 0,
+		Medium = 1,
+		Large = 2
+	}
     export class Player extends Phaser.Sprite
-    {
+	{
+		
         //currentAnimation: Phaser.Animation;
         //nextAnimation: Phaser.Animation;
         frameVelocityX: number;
@@ -11,11 +18,17 @@ module MegaManX
         jumped: boolean;
         wallSliding: boolean;
 		teleporting: boolean;
+		shootReleased: boolean;
+		shotCharge: number;
+		hasShot: boolean;
+		lastChargeShotCallbackTime: number;
 		animatedSprite: AnimatedSprite;
-		nextShootTime: number;
+		chargeStartTime: number;
 		currentShootStanceTimeout: number;
-		shootSound: Phaser.Sound;
 		healthBar: HealthBar;
+
+		shootSounds: Phaser.Sound[];
+		projectileDefinitions: ProjectileDefinition[];
 
         static airMovementSpeed: number = 15;
         static landMovementSpeed: number = 50;
@@ -25,16 +38,52 @@ module MegaManX
         static teleportGravity: number = 150;
 		static jumpVelocty: number = 150;
 
+		static chargeDelayTime:number = 0.5;
+		static shootStanceTimeout: number = 0.75;
+
+		jumpKey: Phaser.Key;
+		shootKey: Phaser.Key;
+
+		chargeStartSound: Phaser.Sound;
+		chargeLoopSound: Phaser.Sound;
+
         constructor(game: Phaser.Game, x: number, y: number)
         {
 			super(game, x, y, null, 0);
 			this.anchor.setTo(0.5, 0.5);
-			this.nextShootTime = 0.0;
+			this.chargeStartTime = 0.0;
 			this.currentShootStanceTimeout = 0.0;
+			this.lastChargeShotCallbackTime = 0.0;
 
 			game.physics.enable(this, Phaser.Physics.ARCADE);
-			this.shootSound = game.add.audio('shoot');
-			this.shootSound.allowMultiple = true;
+			this.shootSounds = new Array(3);
+			this.shootSounds[ShootTypes.Regular] = game.add.audio('shoot');
+			this.shootSounds[ShootTypes.Regular].allowMultiple = true;
+			this.shootSounds[ShootTypes.Medium] = game.add.audio('shot_Medium');
+			this.shootSounds[ShootTypes.Medium].allowMultiple = true;
+			this.shootSounds[ShootTypes.Large] = game.add.audio('shot_Large');
+			this.shootSounds[ShootTypes.Large].allowMultiple = true;
+
+			this.projectileDefinitions = new Array(3);
+			this.projectileDefinitions[ShootTypes.Regular] = new ProjectileDefinition(
+				new AnimationArguments('default', Phaser.Animation.generateFrameNames('bullet', 1, 1, '', 4), 1, true),
+				null,
+				new AnimationArguments('death', Phaser.Animation.generateFrameNames('bullet', 2, 3, '', 4), 30, false)
+			);
+			this.projectileDefinitions[ShootTypes.Medium] = new ProjectileDefinition(
+				new AnimationArguments('default', Phaser.Animation.generateFrameNames('medium', 5, 6, '', 4), 2, true),
+				new AnimationArguments('creation', Phaser.Animation.generateFrameNames('medium', 1, 4, '', 4), 15, false),
+				new AnimationArguments('death', Phaser.Animation.generateFrameNames('medium', 8, 12, '', 4), 15, false)
+			);
+			this.projectileDefinitions[ShootTypes.Large] = new ProjectileDefinition(
+				new AnimationArguments('default', Phaser.Animation.generateFrameNames('large', 4, 4, '', 4), 1, true),
+				new AnimationArguments('creation', Phaser.Animation.generateFrameNames('large', 1, 3, '', 4), 15, false),
+				new AnimationArguments('death', Phaser.Animation.generateFrameNames('large', 6, 10, '', 4), 15, false)
+			);
+
+			this.chargeStartSound = game.add.audio('shotCharge_Start');
+			this.chargeLoopSound = game.add.audio('shotCharge_Loop');
+			this.chargeLoopSound.loop = true;
 			//this.shootSound.addMarker('shoot', 0.75, 1.0);
             //game.physics.enable(this, Phaser.Physics.NINJA);
 
@@ -51,7 +100,10 @@ module MegaManX
             this.onGround = false;
             this.jumped = false;
             this.wallSliding = false;
-            this.teleporting = true;
+			this.teleporting = true;
+			this.shootReleased = true;
+			this.shotCharge = 0;
+			this.hasShot = false;
 
 			game.add.existing(this);
 
@@ -77,6 +129,16 @@ module MegaManX
 
 			this.healthBar = new HealthBar(game, 0, 50, null, null, 25, 10);
 			game.add.existing(this.healthBar);
+
+			this.jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+			this.jumpKey.onDown.add(this.jump, this);
+
+			this.shootKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
+			this.shootKey.onDown.add(this.tryShoot, this);
+			this.shootKey.onUp.add(this.onShootReleased, this);
+			this.shootKey.onHoldCallback = this.onChargingShot;
+			this.shootKey.onHoldContext = this;
+
         }
 
         create()
@@ -93,34 +155,15 @@ module MegaManX
             this.checkMovement();
 
             //Jump
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.canJump)
-            {
-                //Move the body up a hair so we can jump
-                this.body.y -= 1;
-                //Jump
-                //this.body.gravity.clampY(-150, 0);
-                this.body.velocity.y = -Player.jumpVelocty;
+   //         if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.canJump)
+   //         {
                 
-                //Jump away from the wall
-				if (this.animatedSprite.getCurrentAnimationName() === 'wallSlide' || this.onGround === false)
-                {
-                    console.log('jump while sliding');
-                    this.body.velocity.x = (Player.jumpVelocty * -(this.scale.x));
-                    this.wallSliding = false;
-                }
-                else
-                    console.log('jump while not sliding');
+			//}
 
-
-                this.canJump = false;
-                this.jumped = true;
-                this.onGround = false;
-			}
-
-			if (this.game.input.keyboard.isDown(Phaser.Keyboard.D) && this.canShoot())
-			{
-				this.shoot();
-			}
+			//if (this.game.input.keyboard.isDown(Phaser.Keyboard.D) && this.canShoot())
+			//{
+			//	this.shoot();
+			//}
 
 			if (this.animatedSprite.getCurrentAnimationName() === 'wallSlide')
             {
@@ -137,13 +180,50 @@ module MegaManX
             //this.frameVelocityY = this.body.velocity.y;
 		}
 
-		canShoot()
+		jump()
 		{
-			return this.nextShootTime <= this.game.time.totalElapsedSeconds();
+			if (!this.canJump)
+				return;
+
+			//Move the body up a hair so we can jump
+			this.body.y -= 1;
+			//Jump
+			//this.body.gravity.clampY(-150, 0);
+			this.body.velocity.y = -Player.jumpVelocty;
+
+			//Jump away from the wall
+			if (this.animatedSprite.getCurrentAnimationName() === 'wallSlide' || this.onGround === false) {
+				console.log('jump while sliding');
+				this.body.velocity.x = (Player.jumpVelocty * -(this.scale.x));
+				this.wallSliding = false;
+			}
+			else
+				console.log('jump while not sliding');
+
+
+			this.canJump = false;
+			this.jumped = true;
+			this.onGround = false;
 		}
 
-		shoot()
+		canShoot()
 		{
+			return this.shootReleased;
+			//return this.nextShootTime <= this.game.time.totalElapsedSeconds();
+		}
+
+		tryShoot()
+		{
+			if (!this.canShoot())
+				return;
+
+			this.shoot(ShootTypes.Regular);
+		}
+
+		shoot(type: ShootTypes)
+		{
+			this.hasShot = true;
+			this.shootReleased = false;
 			//Play animation
 			var currentAnimationName = this.animatedSprite.getCurrentAnimationName();
 			var isShooting = this.isShootAnimation(currentAnimationName);
@@ -160,20 +240,73 @@ module MegaManX
 					return;
 			}
 
+			var direction = this.scale.x * (this.wallSliding ? -1 : 1);
 			//Create the projectile
-			var x = (this.body.x + ((this.body.width / 2) * this.scale.x)) ;
+			var x = (this.body.x + ((this.body.width / 2) * direction)) ;
 			var y = (this.body.y + (this.body.height / 2) - 5);
-			var bullet = new Projectile(this.game, x, y, 'player_shoot', 1, (750 * this.scale.x), 0);
+			var projectileArguments = new ProjectileArguments(this.projectileDefinitions[type], (750 * direction), 0);
+			projectileArguments.xScale = direction;
+			var bullet = new Projectile(this.game, x, y, projectileArguments, 'player_shoot');
 			var convertedGame = (this.game as Game).addProjectile(bullet);
-			bullet.animations.add('default', Phaser.Animation.generateFrameNames('bullet', 1, 1, '', 4), 1, false);
-			bullet.animations.add('death', Phaser.Animation.generateFrameNames('bullet', 2, 3, '', 4), 30, true);
-			bullet.deathAnimation = 'death';
-			bullet.animations.play('default');
-			this.shootSound.play();
+			//bullet.animations.add('default', Phaser.Animation.generateFrameNames('bullet', 1, 1, '', 4), 1, false);
+			//bullet.animations.add('death', Phaser.Animation.generateFrameNames('bullet', 2, 3, '', 4), 30, true);
+			//bullet.deathAnimation = 'death';
+			//bullet.animations.play('default');
+			bullet.initProjectile();
+			this.playShootSound(type);
 			
 			//Update next shoot time
-			this.nextShootTime = this.game.time.totalElapsedSeconds() + 0.25;
-			this.currentShootStanceTimeout = this.game.time.totalElapsedSeconds() + 0.75;
+			this.chargeStartTime = this.game.time.totalElapsedSeconds() + Player.chargeDelayTime;
+			this.currentShootStanceTimeout = this.game.time.totalElapsedSeconds() + Player.shootStanceTimeout;
+		}
+
+		onShootReleased()
+		{
+			this.shootReleased = true;
+			this.hasShot = false;
+
+			if (this.chargeStartSound.isPlaying)
+				this.chargeStartSound.stop();
+			if (this.chargeLoopSound.isPlaying)
+				this.chargeLoopSound.stop();
+
+			if (this.shotCharge > 0)
+			{
+				var type: ShootTypes = ShootTypes.Regular;
+				if (this.shotCharge > 1 && this.shotCharge < 50)
+					type = ShootTypes.Medium;
+				else if (this.shotCharge >= 50)
+					type = ShootTypes.Large;
+
+				this.shoot(type);
+				this.shootReleased = true;
+				this.hasShot = false;
+			}
+
+			this.shotCharge = 0;
+		}
+
+		onChargingShot()
+		{
+			if (!this.hasShot)
+			{
+				this.shoot(ShootTypes.Regular);
+				return;
+			}
+
+			if (this.chargeStartTime > this.game.time.totalElapsedSeconds() || this.shootReleased)
+				return;
+
+			if (this.shotCharge <= 0 && !this.chargeStartSound.isPlaying)
+				this.chargeStartSound.play();
+			this.shotCharge = (this.chargeStartSound.currentTime / this.chargeStartSound.duration) / 10;
+			if (!this.chargeStartSound.isPlaying && !this.chargeLoopSound.isPlaying)
+				this.chargeLoopSound.play();
+		}
+
+		playShootSound(type: ShootTypes)
+		{
+			this.shootSounds[type].play();
 		}
 
         checkMovement()
@@ -306,7 +439,7 @@ module MegaManX
                 (
                     this.body.touching.down === false
 					&& currentAnimationName !== 'run'
-                    && this.body.deltaY() > 1.0
+                    /*&& this.body.deltaY() > 1.0*/
                 )
                 || this.jumped === true
             )
