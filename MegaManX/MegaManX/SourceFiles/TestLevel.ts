@@ -94,7 +94,15 @@ module MegaManX
 
         render()
         {
-            this.game.debug.spriteBounds(this.player, 'red', false);
+			this.game.debug.spriteBounds(this.player, 'red', false);
+
+			var castedGame = (this.game as Game);
+			for (var i = 0; i < castedGame.projectiles.length; ++i)
+			{
+				var projectile = castedGame.projectiles[i];
+				if (projectile !== null && projectile !== undefined && (!projectile.isDead || !projectile.isDying) && projectile.worldTransform)
+					this.game.debug.spriteBounds(projectile, 'red', false);
+			}
             //this.game.debug.spriteInfo(this.player, 32, 32);
 
             //this.game.debug.renderSpriteBody(this.player, 'blue');
@@ -119,9 +127,9 @@ module MegaManX
                 //this.game.debug.spriteCollision(this.tiles.getAt(i), 32, 32);
             }
 
-			this.game.debug.text('Current Animation: ' + this.player.animatedSprite.getCurrentAnimationName(), 32, 128);
-			this.game.debug.text('onFloor: ' + this.player.body.onFloor(), 32, 160);
-			this.game.debug.text('shot charge: ' + this.player.shotCharge, 32, 192);
+			//this.game.debug.text('Current Animation: ' + this.player.animatedSprite.getCurrentAnimationName(), 32, 128);
+			//this.game.debug.text('onFloor: ' + this.player.body.onFloor(), 32, 160);
+			//this.game.debug.text('shot charge: ' + this.player.shotCharge, 32, 192);
 
             //this.game.debug.renderQuadTree(this.game.physics.quadTree);
         }

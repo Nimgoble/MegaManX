@@ -43,3 +43,11 @@ Thumbs.db
 /MegaManX/MegaManX/obj
 /nppBackup
 
+*.out
+MegaManX/MegaManX/obj/Debug/MegaManX.csproj.FileListAbsolute.txt
+MegaManX/MegaManX/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+MegaManX/MegaManX/megamanx.js.map
+MegaManX/MegaManX/megamanx.js
+MegaManX/.vs/MegaManX/v15/sqlite3/storage.ide
+MegaManX/.vs/MegaManX/v15/.suo
+MegaManX/.vs/config/applicationhost.config

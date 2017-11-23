@@ -34,6 +34,22 @@ var MegaManX;
 })(MegaManX || (MegaManX = {}));
 var MegaManX;
 (function (MegaManX) {
+    class AnimationArguments {
+        constructor(name, frames, frameRate, loop, useNumericIndex) {
+            this.name = name;
+            this.frames = frames;
+            this.frameRate = frameRate;
+            this.loop = loop;
+            this.useNumericIndex;
+        }
+        addToAnimationManager(manager) {
+            return manager.add(this.name, this.frames, this.frameRate, this.loop, this.useNumericIndex);
+        }
+    }
+    MegaManX.AnimationArguments = AnimationArguments;
+})(MegaManX || (MegaManX = {}));
+var MegaManX;
+(function (MegaManX) {
     class Boot extends Phaser.State {
         preload() {
             this.load.image('preloadBar', 'Content/loader.png');
@@ -176,8 +192,8 @@ var MegaManX;
             this.shootSounds[ShootTypes.Large].allowMultiple = true;
             this.projectileDefinitions = new Array(3);
             this.projectileDefinitions[ShootTypes.Regular] = new MegaManX.ProjectileDefinition(new MegaManX.AnimationArguments('default', Phaser.Animation.generateFrameNames('bullet', 1, 1, '', 4), 1, true), null, new MegaManX.AnimationArguments('death', Phaser.Animation.generateFrameNames('bullet', 2, 3, '', 4), 30, false));
-            this.projectileDefinitions[ShootTypes.Medium] = new MegaManX.ProjectileDefinition(new MegaManX.AnimationArguments('default', Phaser.Animation.generateFrameNames('medium', 5, 6, '', 4), 2, true), new MegaManX.AnimationArguments('creation', Phaser.Animation.generateFrameNames('medium', 1, 4, '', 4), 15, false), new MegaManX.AnimationArguments('death', Phaser.Animation.generateFrameNames('medium', 8, 12, '', 4), 15, false));
-            this.projectileDefinitions[ShootTypes.Large] = new MegaManX.ProjectileDefinition(new MegaManX.AnimationArguments('default', Phaser.Animation.generateFrameNames('large', 4, 4, '', 4), 1, true), new MegaManX.AnimationArguments('creation', Phaser.Animation.generateFrameNames('large', 1, 3, '', 4), 15, false), new MegaManX.AnimationArguments('death', Phaser.Animation.generateFrameNames('large', 6, 10, '', 4), 15, false));
+            this.projectileDefinitions[ShootTypes.Medium] = new MegaManX.ProjectileDefinition(new MegaManX.AnimationArguments('default', Phaser.Animation.generateFrameNames('medium', 5, 6, '', 4), 2, true), new MegaManX.AnimationArguments('creation', Phaser.Animation.generateFrameNames('medium', 1, 4, '', 4), 30, false), new MegaManX.AnimationArguments('death', Phaser.Animation.generateFrameNames('medium', 8, 12, '', 4), 30, false));
+            this.projectileDefinitions[ShootTypes.Large] = new MegaManX.ProjectileDefinition(new MegaManX.AnimationArguments('default', Phaser.Animation.generateFrameNames('large', 4, 4, '', 4), 1, true), new MegaManX.AnimationArguments('creation', Phaser.Animation.generateFrameNames('large', 1, 3, '', 4), 30, false), new MegaManX.AnimationArguments('death', Phaser.Animation.generateFrameNames('large', 6, 10, '', 4), 30, false));
             this.chargeStartSound = game.add.audio('shotCharge_Start');
             this.chargeLoopSound = game.add.audio('shotCharge_Loop');
             this.chargeLoopSound.loop = true;
@@ -304,10 +320,13 @@ var MegaManX;
             var direction = this.scale.x * (this.wallSliding ? -1 : 1);
             //Create the projectile
             var x = (this.body.x + ((this.body.width / 2) * direction));
-            var y = (this.body.y + (this.body.height / 2) - 5);
+            var blasterY = (this.body.y + (this.body.height / 2) - 3);
             var projectileArguments = new MegaManX.ProjectileArguments(this.projectileDefinitions[type], (750 * direction), 0);
             projectileArguments.xScale = direction;
-            var bullet = new MegaManX.Projectile(this.game, x, y, projectileArguments, 'player_shoot');
+            var bullet = new MegaManX.Projectile(this.game, x, blasterY, projectileArguments, 'player_shoot');
+            //We want the middle of the sprite to be in line with the blaster:
+            var halfHeight = bullet.height / 2;
+            bullet.y -= halfHeight;
             var convertedGame = this.game.addProjectile(bullet);
             //bullet.animations.add('default', Phaser.Animation.generateFrameNames('bullet', 1, 1, '', 4), 1, false);
             //bullet.animations.add('death', Phaser.Animation.generateFrameNames('bullet', 2, 3, '', 4), 30, true);
@@ -627,6 +646,7 @@ var MegaManX;
     class Projectile extends Phaser.Sprite {
         constructor(game, x, y, projectileArguments, key, frame) {
             super(game, x, y, key, frame);
+            this.anchor.setTo(0.5, 0.5);
             this.isDying = false;
             this.isDead = false;
             game.physics.enable(this, Phaser.Physics.ARCADE);
@@ -678,6 +698,17 @@ var MegaManX;
         }
     }
     MegaManX.Projectile = Projectile;
+})(MegaManX || (MegaManX = {}));
+var MegaManX;
+(function (MegaManX) {
+    class ProjectileDefinition {
+        constructor(flyingAnimation, creationAnimation, deathAnimation) {
+            this.creationAnimation = creationAnimation;
+            this.flyingAnimation = flyingAnimation;
+            this.deathAnimation = deathAnimation;
+        }
+    }
+    MegaManX.ProjectileDefinition = ProjectileDefinition;
 })(MegaManX || (MegaManX = {}));
 var MegaManX;
 (function (MegaManX) {
@@ -752,6 +783,12 @@ var MegaManX;
         }
         render() {
             this.game.debug.spriteBounds(this.player, 'red', false);
+            var castedGame = this.game;
+            for (var i = 0; i < castedGame.projectiles.length; ++i) {
+                var projectile = castedGame.projectiles[i];
+                if (projectile !== null && projectile !== undefined && (!projectile.isDead || !projectile.isDying) && projectile.worldTransform)
+                    this.game.debug.spriteBounds(projectile, 'red', false);
+            }
             //this.game.debug.spriteInfo(this.player, 32, 32);
             //this.game.debug.renderSpriteBody(this.player, 'blue');
             //this.game.debug.renderSpriteCollision(this.player, 32, 160);
@@ -771,39 +808,12 @@ var MegaManX;
                 this.game.debug.spriteBounds(this.tiles.getAt(i), 'purple', false);
                 //this.game.debug.spriteCollision(this.tiles.getAt(i), 32, 32);
             }
-            this.game.debug.text('Current Animation: ' + this.player.animatedSprite.getCurrentAnimationName(), 32, 128);
-            this.game.debug.text('onFloor: ' + this.player.body.onFloor(), 32, 160);
-            this.game.debug.text('shot charge: ' + this.player.shotCharge, 32, 192);
+            //this.game.debug.text('Current Animation: ' + this.player.animatedSprite.getCurrentAnimationName(), 32, 128);
+            //this.game.debug.text('onFloor: ' + this.player.body.onFloor(), 32, 160);
+            //this.game.debug.text('shot charge: ' + this.player.shotCharge, 32, 192);
             //this.game.debug.renderQuadTree(this.game.physics.quadTree);
         }
     }
     MegaManX.TestLevel = TestLevel;
-})(MegaManX || (MegaManX = {}));
-var MegaManX;
-(function (MegaManX) {
-    class AnimationArguments {
-        constructor(name, frames, frameRate, loop, useNumericIndex) {
-            this.name = name;
-            this.frames = frames;
-            this.frameRate = frameRate;
-            this.loop = loop;
-            this.useNumericIndex;
-        }
-        addToAnimationManager(manager) {
-            return manager.add(this.name, this.frames, this.frameRate, this.loop, this.useNumericIndex);
-        }
-    }
-    MegaManX.AnimationArguments = AnimationArguments;
-})(MegaManX || (MegaManX = {}));
-var MegaManX;
-(function (MegaManX) {
-    class ProjectileDefinition {
-        constructor(flyingAnimation, creationAnimation, deathAnimation) {
-            this.creationAnimation = creationAnimation;
-            this.flyingAnimation = flyingAnimation;
-            this.deathAnimation = deathAnimation;
-        }
-    }
-    MegaManX.ProjectileDefinition = ProjectileDefinition;
 })(MegaManX || (MegaManX = {}));
 //# sourceMappingURL=megamanx.js.map

@@ -24,6 +24,7 @@
 		constructor(game: Phaser.Game, x: number, y: number, projectileArguments: ProjectileArguments, key?: any, frame?: any)
 		{
 			super(game, x, y, key, frame);
+			this.anchor.setTo(0.5, 0.5);
 			this.isDying = false;
 			this.isDead = false;
 			game.physics.enable(this, Phaser.Physics.ARCADE);
