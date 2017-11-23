@@ -116,7 +116,8 @@ module MegaManX
             this.game.debug.renderText('Frame Velocity Y: ' + this.player.frameVelocityY.toString(), 32, 404);
             */
 
-            this.game.debug.text('Wall sliding: ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 400);
+			this.game.debug.text('Wall sliding(method): ' + (this.player.isWallSliding() ? 'Yes' : 'No'), 32, 384);
+            this.game.debug.text('Wall sliding(variable): ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 400);
 			this.game.debug.text('Left Key Down: ' + (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) ? 'Yes' : 'No'), 32, 416);
 			this.game.debug.text('Right Key Down: ' + (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) ? 'Yes' : 'No'), 32, 432);
 			this.game.debug.text('Dashing: ' + (this.player.isDashing  ? 'Yes' : 'No'), 32, 448);

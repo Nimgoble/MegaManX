@@ -49,9 +49,12 @@ module MegaManX
 		jumpKey: Phaser.Key;
 		shootKey: Phaser.Key;
 		dashKey: Phaser.Key;
+		moveLeftKey: Phaser.Key;
+		moveRightKey: Phaser.Key;
 
 		chargeStartSound: Phaser.Sound;
 		chargeLoopSound: Phaser.Sound;
+		otherSFX: Phaser.Sound;
 
         constructor(game: Phaser.Game, x: number, y: number)
         {
@@ -91,8 +94,12 @@ module MegaManX
 			this.chargeStartSound = game.add.audio('shotCharge_Start');
 			this.chargeLoopSound = game.add.audio('shotCharge_Loop');
 			this.chargeLoopSound.loop = true;
-			//this.shootSound.addMarker('shoot', 0.75, 1.0);
-            //game.physics.enable(this, Phaser.Physics.NINJA);
+
+			this.otherSFX = game.add.audio('sfx');
+			this.otherSFX.allowMultiple = true;
+			this.otherSFX.addMarker('jump', 21.5, 0.75);
+			this.otherSFX.addMarker('jumpLand', 22.5, 0.5);
+			this.otherSFX.addMarker('dash', 23.75, 0.5);
 
             this.body.collideWorldBounds = false;
             //this.body.gravity.x = 0;
@@ -151,6 +158,15 @@ module MegaManX
 
 			this.dashKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
 			this.dashKey.onDown.add(this.tryDash, this);
+
+			this.moveLeftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+			//this.moveLeftKey.onDown.add(this.processMovement, this, null, -1);
+			//this.moveLeftKey.onHoldCallback = () => { this.processMovement(-1); };
+			//this.moveLeftKey.onHoldContext = this;
+			this.moveRightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+			//this.moveRightKey.onDown.add(this.processMovement, this, null, 1);
+			//this.moveRightKey.onHoldCallback = () => { this.processMovement(1); };
+			//this.moveRightKey.onHoldContext = this;
         }
 
         create()
@@ -169,9 +185,10 @@ module MegaManX
 			if (this.isDashing && this.game.time.totalElapsedSeconds() >= this.nextDashTimeout)
 				this.stopDash();
 
-			if (this.animatedSprite.getCurrentAnimationName() === 'wallSlide')
+			if (this.isWallSliding())
             {
-                this.body.gravity.y = Player.slidingGravity;
+				this.body.gravity.y = Player.slidingGravity;
+				this.body.velocity.y = this.clamp(this.body.velocity.y, -Player.jumpVelocty, 50);
             }
             else
             {
@@ -181,8 +198,22 @@ module MegaManX
 
 		jump()
 		{
-			if (!this.canJump)
+			if (!this.canJump && !this.teleporting)
 				return;
+
+			//Jump away from the wall
+			if (this.isWallSliding())
+			{
+				console.log('jump while sliding');
+				//Move us away from the wall a little bit
+				this.body.x += (50 * -(this.scale.x));
+				this.body.velocity.x = (Player.maxDashSpeed * -(this.scale.x));
+				if (this.dashKey.isDown)
+					this.dash();
+				//this.wallSliding = false;
+			}
+			else
+				console.log('jump while not sliding');
 
 			//Move the body up a hair so we can jump
 			this.body.y -= 1;
@@ -190,26 +221,16 @@ module MegaManX
 			//this.body.gravity.clampY(-150, 0);
 			this.body.velocity.y = -Player.jumpVelocty;
 
-			//Jump away from the wall
-			if (this.animatedSprite.getCurrentAnimationName() === 'wallSlide' || this.onGround === false) {
-				console.log('jump while sliding');
-				this.body.velocity.x = (Player.jumpVelocty * -(this.scale.x));
-				if (this.dashKey.isDown)
-					this.dash();
-				this.wallSliding = false;
-			}
-			else
-				console.log('jump while not sliding');
-
 
 			this.canJump = false;
 			this.jumped = true;
 			this.onGround = false;
+			this.otherSFX.play('jump');
 		}
 
 		canDash()
 		{
-			return !this.isDashing && (this.body.touching.down || this.wallSliding);
+			return !this.isDashing && (this.body.touching.down || this.isWallSliding());
 		}
 
 		tryDash()
@@ -226,6 +247,7 @@ module MegaManX
 
 			this.isDashing = true;
 			this.nextDashTimeout = this.game.time.totalElapsedSeconds() + Player.dashTime;
+			this.otherSFX.play('dash');
 		}
 
 		stopDash()
@@ -267,7 +289,7 @@ module MegaManX
 					return;
 			}
 
-			var direction = this.scale.x * (this.wallSliding ? -1 : 1);
+			var direction = this.scale.x * (this.isWallSliding() ? -1 : 1);
 			//Create the projectile
 			var x = (this.body.x + ((this.body.width / 2) * direction));
 			var blasterY = (this.body.y + (this.body.height / 2) - 3);
@@ -337,26 +359,28 @@ module MegaManX
 
         checkMovement()
 		{
-            //Move left/right
-			var direction = this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) ? -1 : (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) ? 1 : 0);
+			//Move left/right
+			var direction = this.moveLeftKey.isDown ? -1 : (this.moveRightKey.isDown ? 1 : 0);
 			//If we were wallsliding and then pressed the opposite direction, then we are no long wallsliding
-			if (this.scale.x === (direction * -1) && this.wallSliding === true)
-				this.canJump = this.wallSliding = false;
+			if (this.scale.x === (direction * -1) && this.isWallSliding() === true)
+				this.canJump = /*this.wallSliding =*/ false;
 			//If we dashed in one direction (while on the ground) and then tried to move the opposite direction, stop dashing.
 			if (this.scale.x === (direction * -1) && this.isDashing === true && this.body.touching.down)
 				this.stopDash();
 
-			if (direction === 0 && !this.isDashing && this.body.touching.down)
+			if (direction === 0 /*&& !(this.isDashing && this.body.touching.down)*/)
 			{
-				this.wallSliding = false;
+				//this.wallSliding = false;
 				this.body.velocity.x = 0;
 				return;
 			}
 
+			this.scale.x = direction === 0 ? this.scale.x : direction;
+
 			var velocity = this.body.velocity.x;
 			var movementSpeed = this.getMovementSpeed();
 			var maxSpeed = this.getMaxSpeed();
-			var newSpeed = velocity += (movementSpeed * direction);
+			var newSpeed = velocity + (movementSpeed * this.scale.x);
 			this.body.velocity.x = this.clamp(newSpeed, -maxSpeed, maxSpeed);
 		}
 
@@ -373,8 +397,11 @@ module MegaManX
                 if (obj1.body.touching.down && this.teleporting === true)
                     this.teleporting = false;
 
-                if (obj1.body.touching.down)
-                    this.onGround = true;
+				if (obj1.body.touching.down && !this.onGround)
+				{
+					//this.otherSFX.play('jumpLand');
+					this.onGround = true;
+				}
                 else
                     this.onGround = false;
 
@@ -383,14 +410,14 @@ module MegaManX
 
                 //If we're touching a wall and we're not on the ground and we're falling
                 //Then we should be wallsliding
-                if (
-                        (this.body.touching.left || this.body.touching.right) &&
-                        this.onGround === false &&
-                        this.body.velocity.y > 0
-                   )
-                    this.wallSliding = true;
-                else
-                    this.wallSliding = false;
+                //if (
+                //        (this.body.touching.left || this.body.touching.right) &&
+                //        this.onGround === false &&
+                //        this.body.velocity.y > 0
+                //   )
+                //    this.wallSliding = true;
+                //else
+                //    this.wallSliding = false;
             }
         }
 
@@ -448,7 +475,7 @@ module MegaManX
 			//this.animatedSprite.nextAnimation = this.animatedSprite.currentAnimation;
 			var nextAnimation = currentAnimationName;
 
-            if (this.wallSliding === true)
+			if (this.isWallSliding() === true)
             {
 				nextAnimation = 'wallSlide';
             }
@@ -508,7 +535,7 @@ module MegaManX
                 nextAnimation = 'jumpFinish';
             }
 
-			this.scale.x = (this.body.velocity.x === 0) ? this.scale.x : Math.abs(this.body.velocity.x) / this.body.velocity.x;
+			//this.scale.x = (this.body.velocity.x === 0) ? this.scale.x : Math.abs(this.body.velocity.x) / this.body.velocity.x;
 
 			if
 			(
@@ -601,7 +628,12 @@ module MegaManX
 
 		getMovementSpeed()
 		{
-			return (this.onGround) ? (this.isDashing ? Player.dashMovementSpeed : Player.landMovementSpeed) : Player.airMovementSpeed;
+			return (this.body.touching.down) ? (this.isDashing ? Player.dashMovementSpeed : Player.landMovementSpeed) : Player.airMovementSpeed;
+		}
+
+		isWallSliding()
+		{
+			return !this.body.touching.down && /*this.body.velocity.y > 0 &&*/ ((this.body.touching.right && this.moveRightKey.isDown) || (this.body.touching.left && this.moveLeftKey.isDown));
 		}
     }
 }

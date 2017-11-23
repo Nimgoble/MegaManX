@@ -34,6 +34,7 @@ module MegaManX
 			this.load.audio('shotCharge_Loop', 'Content/Sounds/MMX02A - Charge Loop.wav');
 			this.load.audio('shot_Medium', 'Content/Sounds/MMX03 - Charged Shot Small.wav');
 			this.load.audio('shot_Large', 'Content/Sounds/MMX04 - Charged Shot Big.wav');
+			this.load.audio('sfx', 'Content/Sounds/mmx_sfx.mp3');
 			//this.load.audiosprite('shoot', 'Content/Sounds/mmx_sfx.mp3', 'Content/Sounds/sounds.json');
         }
 
