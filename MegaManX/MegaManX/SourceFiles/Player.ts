@@ -36,7 +36,7 @@ module MegaManX
 		static landMovementSpeed: number = 50;
 		static dashMovementSpeed: number = 100;
 		static maxSpeed: number = 150;
-		static maxDashSpeed: number = 250;
+		static maxDashSpeed: number = Player.maxSpeed * 2;
         static regularGravity: number = 7.5;
         static slidingGravity: number = 0.5;
         static teleportGravity: number = 150;
@@ -269,7 +269,7 @@ module MegaManX
 
 			var direction = this.scale.x * (this.wallSliding ? -1 : 1);
 			//Create the projectile
-			var x = (this.body.x + ((this.body.width / 2) * direction)) ;
+			var x = (this.body.x + ((this.body.width / 2) * direction));
 			var blasterY = (this.body.y + (this.body.height / 2) - 3);
 			var projectileArguments = new ProjectileArguments(this.projectileDefinitions[type], (750 * direction), 0);
 			projectileArguments.xScale = direction;
@@ -580,7 +580,8 @@ module MegaManX
 			return animation.indexOf('jump') >= 0 ||
 				animation.indexOf('run') >= 0 ||
 				animation.indexOf('wallSlide') >= 0 ||
-				animation.indexOf('idle') >= 0;
+				animation.indexOf('idle') >= 0 ||
+				animation.indexOf('dash') >= 0;
 		}
 
 		isShootAnimation(animation: string)
