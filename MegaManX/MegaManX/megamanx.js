@@ -182,6 +182,7 @@ var MegaManX;
             this.chargeStartTime = 0.0;
             this.currentShootStanceTimeout = 0.0;
             this.lastChargeShotCallbackTime = 0.0;
+            this.nextDashTimeout = 0.0;
             game.physics.enable(this, Phaser.Physics.ARCADE);
             this.shootSounds = new Array(3);
             this.shootSounds[ShootTypes.Regular] = game.add.audio('shoot');
@@ -215,6 +216,7 @@ var MegaManX;
             this.shootReleased = true;
             this.shotCharge = 0;
             this.hasShot = false;
+            this.isDashing = false;
             game.add.existing(this);
             this.animatedSprite = new MegaManX.AnimatedSprite(game, -0.5, -0.5, 'megamanx', 0);
             game.add.existing(this.animatedSprite);
@@ -235,6 +237,8 @@ var MegaManX;
             this.animatedSprite.animations.add('wallSlideShoot', Phaser.Animation.generateFrameNames('wallslideshoot', 1, 2, '', 4), 15, false);
             this.animatedSprite.animations.add('teleportStart', Phaser.Animation.generateFrameNames('teleport', 1, 1, '', 4), 15, false);
             this.animatedSprite.animations.add('teleportFinish', Phaser.Animation.generateFrameNames('teleport', 2, 8, '', 4), 30, false);
+            this.animatedSprite.animations.add('dash', Phaser.Animation.generateFrameNames('dash', 1, 2, '', 4), 15, false);
+            this.animatedSprite.animations.add('dashShoot', Phaser.Animation.generateFrameNames('dashshoot', 1, 2, '', 4), 15, false);
             this.healthBar = new MegaManX.HealthBar(game, 0, 50, null, null, 25, 10);
             game.add.existing(this.healthBar);
             this.jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
@@ -244,6 +248,8 @@ var MegaManX;
             this.shootKey.onUp.add(this.onShootReleased, this);
             this.shootKey.onHoldCallback = this.onChargingShot;
             this.shootKey.onHoldContext = this;
+            this.dashKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
+            this.dashKey.onDown.add(this.tryDash, this);
         }
         create() {
             console.log('creating player');
@@ -253,24 +259,14 @@ var MegaManX;
             if (this.teleporting === true)
                 return;
             this.checkMovement();
-            //Jump
-            //         if (this.game.input.keyboard.isDown(Phaser.Keyboard.UP) && this.canJump)
-            //         {
-            //}
-            //if (this.game.input.keyboard.isDown(Phaser.Keyboard.D) && this.canShoot())
-            //{
-            //	this.shoot();
-            //}
+            if (this.isDashing && this.game.time.totalElapsedSeconds() >= this.nextDashTimeout)
+                this.stopDash();
             if (this.animatedSprite.getCurrentAnimationName() === 'wallSlide') {
                 this.body.gravity.y = Player.slidingGravity;
-                //this.body.velocity.clampY(0, 25.0);
             }
             else {
                 this.body.gravity.y = Player.regularGravity;
-                //this.body.velocity.clampY(0, 75);
             }
-            //this.frameVelocityX = this.body.velocity.x;
-            //this.frameVelocityY = this.body.velocity.y;
         }
         jump() {
             if (!this.canJump)
@@ -284,6 +280,8 @@ var MegaManX;
             if (this.animatedSprite.getCurrentAnimationName() === 'wallSlide' || this.onGround === false) {
                 console.log('jump while sliding');
                 this.body.velocity.x = (Player.jumpVelocty * -(this.scale.x));
+                if (this.dashKey.isDown)
+                    this.dash();
                 this.wallSliding = false;
             }
             else
@@ -291,6 +289,23 @@ var MegaManX;
             this.canJump = false;
             this.jumped = true;
             this.onGround = false;
+        }
+        canDash() {
+            return !this.isDashing && (this.body.touching.down || this.wallSliding);
+        }
+        tryDash() {
+            if (!this.canDash())
+                return;
+            this.dash();
+        }
+        dash() {
+            if (!this.canDash())
+                return;
+            this.isDashing = true;
+            this.nextDashTimeout = this.game.time.totalElapsedSeconds() + Player.dashTime;
+        }
+        stopDash() {
+            this.isDashing = false;
         }
         canShoot() {
             return this.shootReleased;
@@ -328,10 +343,6 @@ var MegaManX;
             var halfHeight = bullet.height / 2;
             bullet.y -= halfHeight;
             var convertedGame = this.game.addProjectile(bullet);
-            //bullet.animations.add('default', Phaser.Animation.generateFrameNames('bullet', 1, 1, '', 4), 1, false);
-            //bullet.animations.add('death', Phaser.Animation.generateFrameNames('bullet', 2, 3, '', 4), 30, true);
-            //bullet.deathAnimation = 'death';
-            //bullet.animations.play('default');
             bullet.initProjectile();
             this.playShootSound(type);
             //Update next shoot time
@@ -375,32 +386,27 @@ var MegaManX;
         }
         checkMovement() {
             //Move left/right
-            if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-                //If we were wallsliding and then pressed the opposite direction, then we are no long wallsliding
-                if (this.scale.x === 1 && this.wallSliding === true)
-                    this.canJump = this.wallSliding = false;
-                if (this.body.velocity.x > -Player.maxSpeed) {
-                    if (this.onGround === true)
-                        this.body.velocity.x -= (this.body.velocity.x - Player.landMovementSpeed < -Player.maxSpeed) ? (-Player.maxSpeed - this.body.velocity.x) : Player.landMovementSpeed;
-                    else
-                        this.body.velocity.x -= (this.body.velocity.x - Player.airMovementSpeed < -Player.maxSpeed) ? (-Player.maxSpeed - this.body.velocity.x) : Player.airMovementSpeed;
-                }
-            }
-            else if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-                //If we were wallsliding and then pressed the opposite direction, then we are no long wallsliding
-                if (this.scale.x === -1 && this.wallSliding === true)
-                    this.canJump = this.wallSliding = false;
-                if (this.body.velocity.x < Player.maxSpeed) {
-                    if (this.onGround === true)
-                        this.body.velocity.x += (this.body.velocity.x + Player.landMovementSpeed > Player.maxSpeed) ? (Player.maxSpeed - this.body.velocity.x) : Player.landMovementSpeed;
-                    else
-                        this.body.velocity.x += (this.body.velocity.x + Player.airMovementSpeed > Player.maxSpeed) ? (Player.maxSpeed - this.body.velocity.x) : Player.airMovementSpeed;
-                }
-            }
-            else {
+            var direction = this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) ? -1 : (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) ? 1 : 0);
+            //If we were wallsliding and then pressed the opposite direction, then we are no long wallsliding
+            if (this.scale.x === (direction * -1) && this.wallSliding === true)
+                this.canJump = this.wallSliding = false;
+            //If we dashed in one direction (while on the ground) and then tried to move the opposite direction, stop dashing.
+            if (this.scale.x === (direction * -1) && this.isDashing === true && this.body.touching.down)
+                this.stopDash();
+            if (direction === 0 && !this.isDashing && this.body.touching.down) {
                 this.wallSliding = false;
                 this.body.velocity.x = 0;
+                return;
             }
+            var velocity = this.body.velocity.x;
+            var movementSpeed = this.getMovementSpeed();
+            var maxSpeed = this.getMaxSpeed();
+            var newSpeed = velocity += (movementSpeed * direction);
+            this.body.velocity.x = this.clamp(newSpeed, -maxSpeed, maxSpeed);
+        }
+        ///Missing TS bindings for Math.Clamp.
+        clamp(x, a, b) {
+            return (x < a) ? a : ((x > b) ? b : x);
         }
         collisionCallback(obj1, obj2) {
             if (obj1 === this) {
@@ -467,12 +473,13 @@ var MegaManX;
             if (this.wallSliding === true) {
                 nextAnimation = 'wallSlide';
             }
-            else if ((this.body.touching.down === false
-                && currentAnimationName !== 'run')
+            else if (
+            /*(
+                this.body.touching.down === false
+                && currentAnimationName !== 'run'
+            )*/
+            this.body.touching.down === false
                 || this.jumped === true) {
-                //This isn't techically true, but it'll do for now
-                //this.animations.play('jump');
-                //this.nextAnimation = 'jump';
                 //If we've jumped and our jump animation is done playing and we're falling
                 //Play the in-air animation
                 if (currentAnimationName === 'jumpStart' &&
@@ -493,14 +500,12 @@ var MegaManX;
                 //Wait until our jumpFinish animation is done to move.
                 if (currentAnimationName !== 'jumpFinish' ||
                     (currentAnimationName === 'jumpFinish' && this.animatedSprite.currentAnimation.isFinished)) {
-                    if (this.body.velocity.x > 0) {
-                        //this.animations.play('run');
+                    if (this.isDashing)
+                        nextAnimation = 'dash';
+                    else if (this.body.velocity.x !== 0)
                         nextAnimation = 'run';
-                    }
-                    else if (this.body.velocity.x < 0) {
-                        //this.animations.play('run');
-                        nextAnimation = 'run';
-                    }
+                    else
+                        nextAnimation = 'idle';
                 }
             }
             else {
@@ -508,16 +513,10 @@ var MegaManX;
                 nextAnimation = 'idle';
             }
             //If we JUST got done jumping/falling: play the jumpFinish animation
-            if (this.body.touching.down && this.body.deltaY() > 1.0) {
+            if (this.body.touching.down && this.body.deltaY() > 0.0) {
                 nextAnimation = 'jumpFinish';
             }
-            //Face the player in the correct direction
-            if (this.body.velocity.x > 0 && this.scale.x === -1) {
-                this.scale.x = 1;
-            }
-            else if (this.body.velocity.x < 0 && this.scale.x === 1) {
-                this.scale.x = -1;
-            }
+            this.scale.x = (this.body.velocity.x === 0) ? this.scale.x : Math.abs(this.body.velocity.x) / this.body.velocity.x;
             if (isShooting &&
                 (this.currentShootStanceTimeout <= this.game.time.totalElapsedSeconds()) &&
                 (this.isShootAnimation(nextAnimation) ||
@@ -576,16 +575,25 @@ var MegaManX;
         getNonShootAnimation(animation) {
             return (this.isShootAnimation(animation)) ? animation.replace('Shoot', '') : animation;
         }
+        getMaxSpeed() {
+            return (this.isDashing) ? Player.maxDashSpeed : Player.maxSpeed;
+        }
+        getMovementSpeed() {
+            return (this.onGround) ? (this.isDashing ? Player.dashMovementSpeed : Player.landMovementSpeed) : Player.airMovementSpeed;
+        }
     }
     Player.airMovementSpeed = 15;
     Player.landMovementSpeed = 50;
+    Player.dashMovementSpeed = 100;
     Player.maxSpeed = 150;
+    Player.maxDashSpeed = 250;
     Player.regularGravity = 7.5;
     Player.slidingGravity = 0.5;
     Player.teleportGravity = 150;
     Player.jumpVelocty = 150;
     Player.chargeDelayTime = 0.5;
     Player.shootStanceTimeout = 0.75;
+    Player.dashTime = 0.75;
     MegaManX.Player = Player;
 })(MegaManX || (MegaManX = {}));
 var MegaManX;
@@ -800,9 +808,10 @@ var MegaManX;
             this.game.debug.renderText('Frame Velocity X: ' + this.player.frameVelocityX.toString(), 32, 388);
             this.game.debug.renderText('Frame Velocity Y: ' + this.player.frameVelocityY.toString(), 32, 404);
             */
-            //this.game.debug.renderText('Wall sliding: ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 400);
-            //this.game.debug.renderText('Teleporting: ' + (this.player.teleporting ? 'Yes' : 'No'), 32, 416);
-            //this.game.debug.renderText('Player Gravity: ' + this.player.body.gravity.toString(), 32, 432);
+            this.game.debug.text('Wall sliding: ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 400);
+            this.game.debug.text('Left Key Down: ' + (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) ? 'Yes' : 'No'), 32, 416);
+            this.game.debug.text('Right Key Down: ' + (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) ? 'Yes' : 'No'), 32, 432);
+            this.game.debug.text('Dashing: ' + (this.player.isDashing ? 'Yes' : 'No'), 32, 448);
             this.game.debug.bodyInfo(this.player, 32, 32);
             for (var i = 0; i < this.tiles.length; i++) {
                 this.game.debug.spriteBounds(this.tiles.getAt(i), 'purple', false);

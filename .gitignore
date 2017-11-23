@@ -40,7 +40,9 @@ Thumbs.db
 /MegaManX/.vs/*
 /MegaManX/MegaManX/Content/sprites/*
 /MegaManX/MegaManX/bin
+/MegaManX/MegaManX/bin/*
 /MegaManX/MegaManX/obj
+/MegaManX/MegaManX/obj/*
 /nppBackup
 
 *.out
@@ -52,3 +54,10 @@ MegaManX/.vs/MegaManX/v15/sqlite3/storage.ide
 MegaManX/.vs/MegaManX/v15/.suo
 MegaManX/.vs/config/applicationhost.config
 MegaManX/MegaManX.v3.ncrunchsolution.user
+MegaManX/.vs/MegaManX/v15/.suo
+MegaManX/.vs/MegaManX/v15/.suo
+MegaManX/.vs/MegaManX/v15/sqlite3/storage.ide
+MegaManX/MegaManX/megamanx.js
+MegaManX/MegaManX/megamanx.js.map
+MegaManX/MegaManX/obj/Debug/Tsc.out
+

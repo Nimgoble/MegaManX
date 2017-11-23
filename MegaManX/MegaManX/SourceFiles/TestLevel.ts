@@ -116,9 +116,10 @@ module MegaManX
             this.game.debug.renderText('Frame Velocity Y: ' + this.player.frameVelocityY.toString(), 32, 404);
             */
 
-            //this.game.debug.renderText('Wall sliding: ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 400);
-            //this.game.debug.renderText('Teleporting: ' + (this.player.teleporting ? 'Yes' : 'No'), 32, 416);
-            //this.game.debug.renderText('Player Gravity: ' + this.player.body.gravity.toString(), 32, 432);
+            this.game.debug.text('Wall sliding: ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 400);
+			this.game.debug.text('Left Key Down: ' + (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) ? 'Yes' : 'No'), 32, 416);
+			this.game.debug.text('Right Key Down: ' + (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) ? 'Yes' : 'No'), 32, 432);
+			this.game.debug.text('Dashing: ' + (this.player.isDashing  ? 'Yes' : 'No'), 32, 448);
 
 			this.game.debug.bodyInfo(this.player, 32, 32);
             for (var i = 0; i < this.tiles.length; i++)
