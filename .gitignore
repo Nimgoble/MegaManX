@@ -37,12 +37,17 @@ ehthumbs.db
 Thumbs.db
 
 /MegaManX/.vs/*
-/MegaManX/.vs/*
+/MegaManX/packages/
+/MegaManX/packages/*
 /MegaManX/MegaManX/Content/sprites/*
 /MegaManX/MegaManX/bin
 /MegaManX/MegaManX/bin/*
 /MegaManX/MegaManX/obj
 /MegaManX/MegaManX/obj/*
+/MegaManX/*/bin
+/MegaManX/*/bin/*
+/MegaManX/*/obj
+/MegaManX/*/obj/*
 /nppBackup
 
 *.out
