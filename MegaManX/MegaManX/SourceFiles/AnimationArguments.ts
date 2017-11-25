@@ -2,14 +2,16 @@
 {
 	export class AnimationArguments
 	{
-		public constructor(name: string, frames?: number[] | string[], frameRate?: number, loop?: boolean, useNumericIndex?: boolean)
+		public constructor(name: string, frames?: number[] | string[], frameRate?: number, loop?: boolean, useNumericIndex?: boolean, spriteKey?: string)
 		{
 			this.name = name;
 			this.frames = frames;
 			this.frameRate = frameRate;
 			this.loop = loop;
 			this.useNumericIndex;
+			this.spriteKey = spriteKey;
 		}
+		spriteKey?: string;
 		name: string;
 		frames?: number[] | string[];
 		frameRate?: number;

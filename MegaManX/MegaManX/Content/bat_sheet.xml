@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas ImagePath="bat_sheet.png">
+  <SubTexture X="5" Y="5" Width="14" Height="22" />
+  <SubTexture X="29" Y="5" Width="14" Height="22" />
+  <SubTexture X="53" Y="5" Width="14" Height="22" />
+  <SubTexture X="77" Y="5" Width="14" Height="22" />
+  <SubTexture X="101" Y="5" Width="23" Height="22" />
+  <SubTexture X="134" Y="5" Width="23" Height="22" />
+  <SubTexture X="167" Y="5" Width="29" Height="21" />
+  <SubTexture X="206" Y="5" Width="39" Height="21" />
+</TextureAtlas>

@@ -42,6 +42,8 @@
     <Content Include="Content\Sounds\MMX05 - Jump Land 1.wav" />
     <Content Include="Content\Sounds\MMX06 - Jump Land 2.wav" />
     <Content Include="Content\Sounds\mmx_sfx.mp3" />
+    <Content Include="Content\wallEffects_sheet.png" />
+    <Content Include="Content\wallEffects_sheet.xml" />
     <Content Include="index.html" />
     <Content Include="ThirdParty\phaser.js" />
     <Content Include="ThirdParty\phaser.map" />
@@ -53,6 +55,7 @@
     <TypeScriptCompile Include="SourceFiles\AnimatedSprite.ts" />
     <TypeScriptCompile Include="SourceFiles\AnimationArguments.ts" />
     <TypeScriptCompile Include="SourceFiles\Boot.ts" />
+    <TypeScriptCompile Include="SourceFiles\Effect.ts" />
     <TypeScriptCompile Include="SourceFiles\Game.ts" />
     <TypeScriptCompile Include="SourceFiles\HealthBar.ts" />
     <TypeScriptCompile Include="SourceFiles\MainMenu.ts" />

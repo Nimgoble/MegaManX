@@ -189,6 +189,10 @@ module MegaManX
             {
 				this.body.gravity.y = Player.slidingGravity;
 				this.body.velocity.y = this.clamp(this.body.velocity.y, -Player.jumpVelocty, 50);
+				//Move us away from the wall a little bit
+				var slidePosition = this.getTopBackward();
+				var slideEffect = EffectLibrary.Instance.CreateEffect(slidePosition.x, slidePosition.y, 'wallSlideSmoke');
+				slideEffect.Play();
             }
             else
             {
@@ -201,11 +205,14 @@ module MegaManX
 			if (!this.canJump && !this.teleporting)
 				return;
 
+			var kickEffect = null;
 			//Jump away from the wall
 			if (this.isWallSliding())
 			{
 				console.log('jump while sliding');
 				//Move us away from the wall a little bit
+				var kickPosition = this.getBottomBackward();
+				kickEffect = EffectLibrary.Instance.CreateEffect(kickPosition.x, kickPosition.y, 'wallKick');
 				this.body.x += (50 * -(this.scale.x));
 				this.body.velocity.x = (Player.maxDashSpeed * -(this.scale.x));
 				if (this.dashKey.isDown)
@@ -221,6 +228,8 @@ module MegaManX
 			//this.body.gravity.clampY(-150, 0);
 			this.body.velocity.y = -Player.jumpVelocty;
 
+			if (kickEffect !== null)
+				kickEffect.Play();
 
 			this.canJump = false;
 			this.jumped = true;
@@ -634,6 +643,47 @@ module MegaManX
 		isWallSliding()
 		{
 			return !this.body.touching.down && /*this.body.velocity.y > 0 &&*/ ((this.body.touching.right && this.moveRightKey.isDown) || (this.body.touching.left && this.moveLeftKey.isDown));
+		}
+
+		getFacingDirection()
+		{
+			return this.scale.x * (this.isWallSliding() ? -1 : 1);
+		}
+
+		getTopForward()
+		{
+			var bounds = this.getBounds();
+			var position = this.position;
+			var x = (position.x) + ((bounds.width / 2) * this.getFacingDirection());
+			var y = (position.y) - (bounds.height / 2);
+			return new Phaser.Point(x, y);
+		}
+
+		getBottomForward()
+		{
+			var bounds = this.getBounds();
+			var position = this.position;
+			var x = (position.x) + ((bounds.width / 2) * this.getFacingDirection());
+			var y = (position.y) + (bounds.height / 2);
+			return new Phaser.Point(x, y);
+		}
+
+		getTopBackward()
+		{
+			var bounds = this.getBounds();
+			var position = this.position;
+			var x = (position.x) - ((bounds.width / 2) * this.getFacingDirection());
+			var y = (position.y) - (bounds.height / 2);
+			return new Phaser.Point(x, y);
+		}
+
+		getBottomBackward()
+		{
+			var bounds = this.getBounds();
+			var position = this.position;
+			var x = (position.x) - ((bounds.width / 2) * this.getFacingDirection());
+			var y = (position.y) + (bounds.height / 2);
+			return new Phaser.Point(x, y);
 		}
     }
 }

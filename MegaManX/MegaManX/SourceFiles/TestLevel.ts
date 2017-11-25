@@ -92,9 +92,29 @@ module MegaManX
             this.player.updateCurrentAnimation();
 		}
 
+		renderCrossForPoint(point: Phaser.Point, length: number, color?: string)
+		{
+			if (color === null) color = 'red';
+			var halfLength = length / 2;
+			var line1 = new Phaser.Line(point.x - halfLength, point.y - halfLength, point.x + halfLength, point.y + halfLength);
+			var line2 = new Phaser.Line(point.x + halfLength, point.y - halfLength, point.x - halfLength, point.y + halfLength);
+			this.game.debug.geom(line1, color, true);
+			this.game.debug.geom(line2, color, true);
+		}
+
         render()
         {
-			this.game.debug.spriteBounds(this.player, 'red', false);
+			this.game.debug.spriteBounds(this.player, 'blue', false);
+			this.game.debug.body(this.player, 'red', false);
+			this.renderCrossForPoint(this.player.getTopForward(), 10, 'blue');
+			this.renderCrossForPoint(this.player.getBottomForward(), 10, 'blue');
+			this.renderCrossForPoint(this.player.getTopBackward(), 10, 'blue');
+			this.renderCrossForPoint(this.player.getBottomBackward(), 10, 'blue');
+
+			var topForward = this.player.getTopForward();
+			topForward.x -= 5;
+			topForward.y -= 5;
+			var topForwardRect = new Phaser.Rectangle(topForward.x, topForward.y, 10, 10);
 
 			var castedGame = (this.game as Game);
 			for (var i = 0; i < castedGame.projectiles.length; ++i)

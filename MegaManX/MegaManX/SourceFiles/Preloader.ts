@@ -15,6 +15,7 @@ module MegaManX
             this.load.image('mainmenu', 'Content/mainmenu.jpg');
 			this.load.atlasXML('megamanx', 'Content/megamanx_base.png', 'Content/megamanx_base.xml', null);
 			this.load.atlasXML('player_shoot', 'Content/shoot_sheet2.png', 'Content/shoot_sheet2.xml', null);
+			this.load.atlasXML('wallEffects', 'Content/wallEffects_sheet.png', 'Content/wallEffects_sheet.xml', null);
 			//this.healthLoader = this.load.atlasXML('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.json');
 //			this.healthLoader = this.load.atlasJSONArray('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.json');
 			this.load.image('health_top', 'Content/health_top.png');
@@ -36,6 +37,10 @@ module MegaManX
 			this.load.audio('shot_Large', 'Content/Sounds/MMX04 - Charged Shot Big.wav');
 			this.load.audio('sfx', 'Content/Sounds/mmx_sfx.mp3');
 			//this.load.audiosprite('shoot', 'Content/Sounds/mmx_sfx.mp3', 'Content/Sounds/sounds.json');
+
+			EffectLibrary.Instance.Init(this.game);
+			EffectLibrary.Instance.AddEffect('wallKick', new AnimationArguments('wallKick', ['wallEffects0001'], 30, false, null, 'wallEffects'));
+			EffectLibrary.Instance.AddEffect('wallSlideSmoke', new AnimationArguments('wallSlideSmoke', Phaser.Animation.generateFrameNames('wallEffects', 2, 7, '', 4), 30, false, null, 'wallEffects'));
         }
 
         create()

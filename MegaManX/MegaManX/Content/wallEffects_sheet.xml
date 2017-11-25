@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagepath="wallEffects_sheet.png">
+	<SubTexture name="wallEffects0001" x="5" y="5" width="10" height="12" />
+	<SubTexture name="wallEffects0002" x="25" y="5" width="7" height="8" />
+	<SubTexture name="wallEffects0003" x="42" y="5" width="10" height="11" />
+	<SubTexture name="wallEffects0004" x="62" y="5" width="13" height="13" />
+	<SubTexture name="wallEffects0005" x="85" y="5" width="14" height="14" />
+	<SubTexture name="wallEffects0006" x="109" y="5" width="14" height="14" />
+	<SubTexture name="wallEffects0007" x="133" y="5" width="12" height="6" />
+</TextureAtlas>
