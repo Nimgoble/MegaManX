@@ -407,7 +407,7 @@ module MegaManX
 
 		updateEmitterPosition()
 		{
-			var backPosition = this.getTopBackward(true);
+			var backPosition = this.getTopForward(true);
 			this.slideEffectEmitter.position.x = backPosition.x;
 			this.slideEffectEmitter.position.y = backPosition.y;
 		}
@@ -666,8 +666,8 @@ module MegaManX
 		private static emptyRectangle: PIXI.Rectangle = new PIXI.Rectangle(0, 0, 0, 0);
 		getTopForward(relative:boolean)
 		{
-			var bounds = (relative) ? Player.emptyRectangle : this.getBounds();
-			var position = this.position;
+			var bounds = this.getBounds();
+			var position = (relative) ? Player.emptyRectangle : this.position;
 			var x = (position.x) + ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) - (bounds.height / 2);
 			return new Phaser.Point(x, y);
@@ -675,8 +675,8 @@ module MegaManX
 
 		getBottomForward(relative: boolean)
 		{
-			var bounds = (relative) ? Player.emptyRectangle : this.getBounds();
-			var position = this.position;
+			var bounds = this.getBounds();
+			var position = (relative) ? Player.emptyRectangle : this.position;
 			var x = (position.x) + ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) + (bounds.height / 2);
 			return new Phaser.Point(x, y);
@@ -684,8 +684,8 @@ module MegaManX
 
 		getTopBackward(relative: boolean)
 		{
-			var bounds = (relative) ? Player.emptyRectangle : this.getBounds();
-			var position = this.position;
+			var bounds = this.getBounds();
+			var position = (relative) ? Player.emptyRectangle : this.position;
 			var x = (position.x) - ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) - (bounds.height / 2);
 			return new Phaser.Point(x, y);
@@ -693,8 +693,8 @@ module MegaManX
 
 		getBottomBackward(relative: boolean)
 		{
-			var bounds = (relative) ? Player.emptyRectangle : this.getBounds();
-			var position = this.position;
+			var bounds = this.getBounds();
+			var position = (relative) ? Player.emptyRectangle : this.position;
 			var x = (position.x) - ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) + (bounds.height / 2);
 			return new Phaser.Point(x, y);
