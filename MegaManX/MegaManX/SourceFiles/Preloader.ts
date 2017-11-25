@@ -39,8 +39,8 @@ module MegaManX
 			//this.load.audiosprite('shoot', 'Content/Sounds/mmx_sfx.mp3', 'Content/Sounds/sounds.json');
 
 			EffectLibrary.Instance.Init(this.game);
-			EffectLibrary.Instance.AddEffect('wallKick', new AnimationArguments('wallKick', ['wallEffects0001'], 30, false, null, 'wallEffects'));
-			EffectLibrary.Instance.AddEffect('wallSlideSmoke', new AnimationArguments('wallSlideSmoke', Phaser.Animation.generateFrameNames('wallEffects', 2, 7, '', 4), 30, false, null, 'wallEffects'));
+			EffectLibrary.Instance.AddEffect('wallKick', new AnimationArguments('wallKick', ['wallEffects0001'], 15, false, null, 'wallEffects'));
+			EffectLibrary.Instance.AddEffect('wallSlideSmoke', new AnimationArguments('wallSlideSmoke', Phaser.Animation.generateFrameNames('wallEffects', 2, 7, '', 4), 15, false, null, 'wallEffects'));
         }
 
         create()

@@ -9,8 +9,6 @@ module MegaManX
     export class Player extends Phaser.Sprite
 	{
 		
-        //currentAnimation: Phaser.Animation;
-        //nextAnimation: Phaser.Animation;
         frameVelocityX: number;
         frameVelocityY: number;
         onGround: boolean;
@@ -28,6 +26,7 @@ module MegaManX
 		chargeStartTime: number;
 		currentShootStanceTimeout: number;
 		healthBar: HealthBar;
+		slideEffectEmitter: EffectEmitter;
 
 		shootSounds: Phaser.Sound[];
 		projectileDefinitions: ProjectileDefinition[];
@@ -125,6 +124,9 @@ module MegaManX
 			this.animatedSprite = new AnimatedSprite(game, -0.5, -0.5, 'megamanx', 0);
 			game.add.existing(this.animatedSprite);
 			this.addChild(this.animatedSprite);
+			this.slideEffectEmitter = new EffectEmitter(game, -0.5, -0.5, 'wallSlideSmoke', 0.15);
+			game.add.existing(this.slideEffectEmitter);
+			this.addChild(this.slideEffectEmitter);
 			this.animatedSprite.currentAnimation = this.animatedSprite.animations.add('idle', Phaser.Animation.generateFrameNames('idle', 1, 1, '', 4), 1, true);
 			this.animatedSprite.animations.add('idleBlink', Phaser.Animation.generateFrameNames('idle', 2, 3, '', 4), 1, true);
 			this.animatedSprite.animations.add('run', Phaser.Animation.generateFrameNames('run', 1, 11, '', 4), 25, true);
@@ -181,6 +183,7 @@ module MegaManX
                 return;
 
 			this.checkMovement();
+			this.slideEffectEmitter.update();
 
 			if (this.isDashing && this.game.time.totalElapsedSeconds() >= this.nextDashTimeout)
 				this.stopDash();
@@ -190,12 +193,13 @@ module MegaManX
 				this.body.gravity.y = Player.slidingGravity;
 				this.body.velocity.y = this.clamp(this.body.velocity.y, -Player.jumpVelocty, 50);
 				//Move us away from the wall a little bit
-				var slidePosition = this.getTopBackward();
-				var slideEffect = EffectLibrary.Instance.CreateEffect(slidePosition.x, slidePosition.y, 'wallSlideSmoke');
-				slideEffect.Play();
+				if (!this.slideEffectEmitter.isEnabled())
+					this.slideEffectEmitter.start();
             }
             else
-            {
+			{
+				if (this.slideEffectEmitter.isEnabled())
+					this.slideEffectEmitter.stop();
                 this.body.gravity.y = Player.regularGravity;
             }
 		}
@@ -211,7 +215,7 @@ module MegaManX
 			{
 				console.log('jump while sliding');
 				//Move us away from the wall a little bit
-				var kickPosition = this.getBottomBackward();
+				var kickPosition = this.getBottomBackward(false);
 				kickEffect = EffectLibrary.Instance.CreateEffect(kickPosition.x, kickPosition.y, 'wallKick');
 				this.body.x += (50 * -(this.scale.x));
 				this.body.velocity.x = (Player.maxDashSpeed * -(this.scale.x));
@@ -377,6 +381,8 @@ module MegaManX
 			if (this.scale.x === (direction * -1) && this.isDashing === true && this.body.touching.down)
 				this.stopDash();
 
+			this.updateEmitterPosition();
+
 			if (direction === 0 /*&& !(this.isDashing && this.body.touching.down)*/)
 			{
 				//this.wallSliding = false;
@@ -397,6 +403,13 @@ module MegaManX
 		clamp(x: number, a: number, b: number)
 		{
 			return (x < a) ? a : ((x > b) ? b : x);
+		}
+
+		updateEmitterPosition()
+		{
+			var backPosition = this.getTopBackward(true);
+			this.slideEffectEmitter.position.x = backPosition.x;
+			this.slideEffectEmitter.position.y = backPosition.y;
 		}
 
         collisionCallback(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
@@ -650,36 +663,37 @@ module MegaManX
 			return this.scale.x * (this.isWallSliding() ? -1 : 1);
 		}
 
-		getTopForward()
+		private static emptyRectangle: PIXI.Rectangle = new PIXI.Rectangle(0, 0, 0, 0);
+		getTopForward(relative:boolean)
 		{
-			var bounds = this.getBounds();
+			var bounds = (relative) ? Player.emptyRectangle : this.getBounds();
 			var position = this.position;
 			var x = (position.x) + ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) - (bounds.height / 2);
 			return new Phaser.Point(x, y);
 		}
 
-		getBottomForward()
+		getBottomForward(relative: boolean)
 		{
-			var bounds = this.getBounds();
+			var bounds = (relative) ? Player.emptyRectangle : this.getBounds();
 			var position = this.position;
 			var x = (position.x) + ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) + (bounds.height / 2);
 			return new Phaser.Point(x, y);
 		}
 
-		getTopBackward()
+		getTopBackward(relative: boolean)
 		{
-			var bounds = this.getBounds();
+			var bounds = (relative) ? Player.emptyRectangle : this.getBounds();
 			var position = this.position;
 			var x = (position.x) - ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) - (bounds.height / 2);
 			return new Phaser.Point(x, y);
 		}
 
-		getBottomBackward()
+		getBottomBackward(relative: boolean)
 		{
-			var bounds = this.getBounds();
+			var bounds = (relative) ? Player.emptyRectangle : this.getBounds();
 			var position = this.position;
 			var x = (position.x) - ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) + (bounds.height / 2);

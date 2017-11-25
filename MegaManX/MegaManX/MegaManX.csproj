@@ -24,6 +24,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.css" />
+    <Content Include="Content\bat_sheet.png" />
+    <Content Include="Content\bat_sheet.xml" />
+    <Content Include="Content\bunny_sheet.png" />
+    <Content Include="Content\bunny_sheet.xml" />
     <Content Include="Content\health_sheet.png" />
     <Content Include="Content\health_sheet.xml" />
     <Content Include="Content\loader.png" />
@@ -56,6 +60,7 @@
     <TypeScriptCompile Include="SourceFiles\AnimationArguments.ts" />
     <TypeScriptCompile Include="SourceFiles\Boot.ts" />
     <TypeScriptCompile Include="SourceFiles\Effect.ts" />
+    <TypeScriptCompile Include="SourceFiles\EffectEmitter.ts" />
     <TypeScriptCompile Include="SourceFiles\Game.ts" />
     <TypeScriptCompile Include="SourceFiles\HealthBar.ts" />
     <TypeScriptCompile Include="SourceFiles\MainMenu.ts" />
