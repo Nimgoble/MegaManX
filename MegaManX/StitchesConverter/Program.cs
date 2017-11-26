@@ -49,6 +49,7 @@ namespace StitchesConverter
         {
             return new SubTexture()
             {
+				Name = match.Groups["name"].Value,
                 Height = match.Groups["height"].Value,
                 Width = match.Groups["width"].Value,
                 X = match.Groups["x"].Value,

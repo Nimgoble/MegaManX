@@ -16,6 +16,8 @@ module MegaManX
 			this.load.atlasXML('megamanx', 'Content/megamanx_base.png', 'Content/megamanx_base.xml', null);
 			this.load.atlasXML('player_shoot', 'Content/shoot_sheet2.png', 'Content/shoot_sheet2.xml', null);
 			this.load.atlasXML('wallEffects', 'Content/wallEffects_sheet.png', 'Content/wallEffects_sheet.xml', null);
+			this.load.atlasXML('bat', 'Content/bat_sheet.png', 'Content/bat_sheet.xml', null);
+			this.load.atlasXML('bunny', 'Content/bunny_sheet.png', 'Content/bunny_sheet.xml', null);
 			//this.healthLoader = this.load.atlasXML('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.json');
 //			this.healthLoader = this.load.atlasJSONArray('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.json');
 			this.load.image('health_top', 'Content/health_top.png');
