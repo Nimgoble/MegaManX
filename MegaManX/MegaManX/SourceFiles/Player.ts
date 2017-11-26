@@ -39,7 +39,7 @@ module MegaManX
         static regularGravity: number = 7.5;
         static slidingGravity: number = 0.5;
         static teleportGravity: number = 150;
-		static jumpVelocty: number = 150;
+		static jumpVelocity: number = 150;
 
 		static chargeDelayTime:number = 0.5;
 		static shootStanceTimeout: number = 0.75;
@@ -191,7 +191,7 @@ module MegaManX
 			if (this.isWallSliding())
             {
 				this.body.gravity.y = Player.slidingGravity;
-				this.body.velocity.y = this.clamp(this.body.velocity.y, -Player.jumpVelocty, 50);
+				this.body.velocity.y = this.clamp(this.body.velocity.y, -Player.jumpVelocity, 50);
 				//Move us away from the wall a little bit
 				if (!this.slideEffectEmitter.isEnabled())
 					this.slideEffectEmitter.start();
@@ -230,7 +230,7 @@ module MegaManX
 			this.body.y -= 1;
 			//Jump
 			//this.body.gravity.clampY(-150, 0);
-			this.body.velocity.y = -Player.jumpVelocty;
+			this.body.velocity.y = -Player.jumpVelocity;
 
 			if (kickEffect !== null)
 				kickEffect.Play();

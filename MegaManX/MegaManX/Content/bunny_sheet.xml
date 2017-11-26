@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextureAtlas ImagePath="bunny_sheet.png">
-  <SubTexture X="5" Y="5" Width="27" Height="31" />
-  <SubTexture X="42" Y="5" Width="28" Height="20" />
-  <SubTexture X="80" Y="5" Width="31" Height="27" />
-  <SubTexture X="121" Y="5" Width="28" Height="39" />
-  <SubTexture X="159" Y="5" Width="26" Height="32" />
-  <SubTexture X="195" Y="5" Width="26" Height="32" />
-  <SubTexture X="231" Y="5" Width="10" Height="8" />
-  <SubTexture X="251" Y="5" Width="16" Height="12" />
+  <SubTexture name="bunny0001" x="5" y="5" width="27" height="31" />
+  <SubTexture name="bunny0002" x="42" y="5" width="28" height="20" />
+  <SubTexture name="bunny0003" x="80" y="5" width="31" height="27" />
+  <SubTexture name="bunny0004" x="121" y="5" width="28" height="39" />
+  <SubTexture name="bunny0005" x="159" y="5" width="26" height="32" />
+  <SubTexture name="bunny0006" x="195" y="5" width="26" height="32" />
+  <SubTexture name="bunny0007" x="231" y="5" width="10" height="8" />
+  <SubTexture name="bunny0008" x="251" y="5" width="16" height="12" />
 </TextureAtlas>

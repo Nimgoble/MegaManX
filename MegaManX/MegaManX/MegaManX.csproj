@@ -58,9 +58,11 @@
     <TypeScriptCompile Include="app.ts" />
     <TypeScriptCompile Include="SourceFiles\AnimatedSprite.ts" />
     <TypeScriptCompile Include="SourceFiles\AnimationArguments.ts" />
+    <TypeScriptCompile Include="SourceFiles\BaseEnemy.ts" />
     <TypeScriptCompile Include="SourceFiles\Boot.ts" />
     <TypeScriptCompile Include="SourceFiles\Effect.ts" />
     <TypeScriptCompile Include="SourceFiles\EffectEmitter.ts" />
+    <TypeScriptCompile Include="SourceFiles\Enemies\Bunny.ts" />
     <TypeScriptCompile Include="SourceFiles\Game.ts" />
     <TypeScriptCompile Include="SourceFiles\HealthBar.ts" />
     <TypeScriptCompile Include="SourceFiles\MainMenu.ts" />

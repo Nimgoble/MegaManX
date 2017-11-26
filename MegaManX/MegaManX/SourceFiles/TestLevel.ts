@@ -5,7 +5,9 @@ module MegaManX
         background: Phaser.Sprite;
         player: MegaManX.Player;
         tiles: Phaser.Group;
-        slope: Phaser.Group;
+		slope: Phaser.Group;
+		bunny: MegaManX.Bunny;
+		pauseKey: Phaser.Key;
 
         create()
 		{
@@ -43,12 +45,20 @@ module MegaManX
             }
             this.slope.angle = -15;
 
-            this.player = new MegaManX.Player(this.game, 64, 0);
+			this.player = new MegaManX.Player(this.game, 64, 0);
+			this.bunny = new Bunny(this.game, 128, 332);
 
             this.game.camera.follow(this.player);
             this.player.teleportToGround();
 
-            this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN]);
+			this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.ESC]);
+			this.pauseKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+			this.pauseKey.onDown.add(this.togglePauseGame, this);
+		}
+
+		togglePauseGame()
+		{
+			this.game.paused = !this.game.paused;
 		}
 
         update()
@@ -70,6 +80,7 @@ module MegaManX
 			//console.log("player y velocity before physics collide: " + this.player.body.velocity.y);
             //this.game.physics.arcade.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
 			this.game.physics.arcade.collide(this.tiles, this.player, this.player.collisionCallback, null, this.player);
+			this.game.physics.arcade.collide(this.tiles, this.bunny, this.bunny.OnCollision, null, this.bunny);
 			for (var i = 0; i < castedGame.projectiles.length; ++i)
 			{
 				var projectile = castedGame.projectiles[i];
@@ -106,6 +117,7 @@ module MegaManX
         {
 			//this.game.debug.spriteBounds(this.player, 'blue', false);
 			//this.game.debug.body(this.player, 'red', false);
+			this.game.debug.body(this.bunny, 'red', false);
 			//this.renderCrossForPoint(this.player.getTopForward(false), 10, 'blue');
 			//this.renderCrossForPoint(this.player.getBottomForward(false), 10, 'blue');
 			//this.renderCrossForPoint(this.player.getTopBackward(false), 10, 'blue');

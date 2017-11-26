@@ -2,30 +2,34 @@
 {
 	export class BaseEnemy extends Phaser.Sprite
 	{
-		Health: number;
-		MaxHealth: number;
+		health: number;
+		maxHealth: number;
 		ClassName: string = this.name;
-		AnimatedSprite: AnimatedSprite;
+		animatedSprite: AnimatedSprite;
 		constructor(game: Phaser.Game, x: number, y: number, key?: any, frame?: any, maxHealth?: number, currentHealth?: number)
 		{
-			super(game, x, y, key, frame);
+			super(game, x, y, null, frame);
 			this.anchor.setTo(0.5, 0.5);
 			game.physics.enable(this, Phaser.Physics.ARCADE);
 
 			if (maxHealth !== null)
-				this.MaxHealth = maxHealth;
-			if (currentHealth !== null)
-				this.Health = currentHealth;
+				this.maxHealth = maxHealth;
 
+			this.health = (currentHealth !== null) ? currentHealth : this.maxHealth;
 
 			game.add.existing(this);
 
-			this.AnimatedSprite = new AnimatedSprite(game, -0.5, -0.5, key, 0);
-			game.add.existing(this.AnimatedSprite);
-			this.addChild(this.AnimatedSprite);
+			this.animatedSprite = new AnimatedSprite(game, -0.5, -0.5, key, 0);
+			game.add.existing(this.animatedSprite);
+			this.addChild(this.animatedSprite);
 		}
 
 		OnHit()
+		{
+
+		}
+
+		OnCollision(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
 		{
 
 		}
