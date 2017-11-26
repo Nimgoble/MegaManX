@@ -104,12 +104,12 @@ module MegaManX
 
         render()
         {
-			this.game.debug.spriteBounds(this.player, 'blue', false);
-			this.game.debug.body(this.player, 'red', false);
-			this.renderCrossForPoint(this.player.getTopForward(false), 10, 'blue');
-			this.renderCrossForPoint(this.player.getBottomForward(false), 10, 'blue');
-			this.renderCrossForPoint(this.player.getTopBackward(false), 10, 'blue');
-			this.renderCrossForPoint(this.player.getBottomBackward(false), 10, 'blue');
+			//this.game.debug.spriteBounds(this.player, 'blue', false);
+			//this.game.debug.body(this.player, 'red', false);
+			//this.renderCrossForPoint(this.player.getTopForward(false), 10, 'blue');
+			//this.renderCrossForPoint(this.player.getBottomForward(false), 10, 'blue');
+			//this.renderCrossForPoint(this.player.getTopBackward(false), 10, 'blue');
+			//this.renderCrossForPoint(this.player.getBottomBackward(false), 10, 'blue');
 
 			var castedGame = (this.game as Game);
 			for (var i = 0; i < castedGame.projectiles.length; ++i)
@@ -132,7 +132,7 @@ module MegaManX
             */
 
 			this.game.debug.text('Wall sliding(method): ' + (this.player.isWallSliding() ? 'Yes' : 'No'), 32, 384);
-            this.game.debug.text('Wall sliding(variable): ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 400);
+            //this.game.debug.text('Wall sliding(variable): ' + (this.player.wallSliding ? 'Yes' : 'No'), 32, 400);
 			this.game.debug.text('Left Key Down: ' + (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) ? 'Yes' : 'No'), 32, 416);
 			this.game.debug.text('Right Key Down: ' + (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) ? 'Yes' : 'No'), 32, 432);
 			this.game.debug.text('Dashing: ' + (this.player.isDashing ? 'Yes' : 'No'), 32, 448);

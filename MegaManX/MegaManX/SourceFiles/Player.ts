@@ -383,7 +383,7 @@ module MegaManX
 
 			this.updateEmitterPosition();
 
-			if (direction === 0 /*&& !(this.isDashing && this.body.touching.down)*/)
+			if (direction === 0 && !(this.isDashing && this.body.touching.down))
 			{
 				//this.wallSliding = false;
 				this.body.velocity.x = 0;
