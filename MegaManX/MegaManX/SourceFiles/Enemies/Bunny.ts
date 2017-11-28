@@ -10,7 +10,7 @@
 
 		constructor(game: Phaser.Game, x: number, y: number)
 		{
-			super(game, x, y, 'bunny', null, 5);
+			super(game, x, y, 'bunny', null, 25);
 			this.animatedSprite.currentAnimation = this.animatedSprite.animations.add('idle', Phaser.Animation.generateFrameNames('bunny', 1, 1, '', 4), 1, true);
 			this.animatedSprite.animations.add('jumpStart', Phaser.Animation.generateFrameNames('bunny', 2, 4, '', 4), 15, false);
 			this.animatedSprite.animations.add('falling', Phaser.Animation.generateFrameNames('bunny', 3, 3, '', 4), 1, false);

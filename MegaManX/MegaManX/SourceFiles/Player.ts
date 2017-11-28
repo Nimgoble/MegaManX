@@ -206,7 +206,7 @@ module MegaManX
 
 		jump()
 		{
-			if (!this.canJump && !this.teleporting)
+			if (!this.canJump || this.teleporting)
 				return;
 
 			var kickEffect = null;
@@ -306,9 +306,10 @@ module MegaManX
 			//Create the projectile
 			var x = (this.body.x + ((this.body.width / 2) * direction));
 			var blasterY = (this.body.y + (this.body.height / 2) - 3);
+			var damage = 5 * (type + 1);
 			var projectileArguments = new ProjectileArguments(this.projectileDefinitions[type], (750 * direction), 0);
 			projectileArguments.xScale = direction;
-			var bullet = new Projectile(this.game, x, blasterY, projectileArguments, 'player_shoot');
+			var bullet = new Projectile(this.game, x, blasterY, projectileArguments, 'player_shoot', null, damage);
 			//We want the middle of the sprite to be in line with the blaster:
 			var halfHeight = bullet.height / 2;
 			bullet.y -= halfHeight;
@@ -663,11 +664,12 @@ module MegaManX
 			return this.scale.x * (this.isWallSliding() ? -1 : 1);
 		}
 
-		private static emptyRectangle: PIXI.Rectangle = new PIXI.Rectangle(0, 0, 0, 0);
+		//private static emptyRectangle: PIXI.Rectangle = new PIXI.Rectangle(0, 0, 0, 0);
 		getTopForward(relative:boolean)
 		{
+			var emptyRectangle: PIXI.Rectangle = new PIXI.Rectangle(0, 0, 0, 0);
 			var bounds = this.getBounds();
-			var position = (relative) ? Player.emptyRectangle : this.position;
+			var position = (relative) ? emptyRectangle : this.position;
 			var x = (position.x) + ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) - (bounds.height / 2);
 			return new Phaser.Point(x, y);
@@ -675,8 +677,9 @@ module MegaManX
 
 		getBottomForward(relative: boolean)
 		{
+			var emptyRectangle: PIXI.Rectangle = new PIXI.Rectangle(0, 0, 0, 0);
 			var bounds = this.getBounds();
-			var position = (relative) ? Player.emptyRectangle : this.position;
+			var position = (relative) ? emptyRectangle : this.position;
 			var x = (position.x) + ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) + (bounds.height / 2);
 			return new Phaser.Point(x, y);
@@ -684,8 +687,9 @@ module MegaManX
 
 		getTopBackward(relative: boolean)
 		{
+			var emptyRectangle: PIXI.Rectangle = new PIXI.Rectangle(0, 0, 0, 0);
 			var bounds = this.getBounds();
-			var position = (relative) ? Player.emptyRectangle : this.position;
+			var position = (relative) ? emptyRectangle : this.position;
 			var x = (position.x) - ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) - (bounds.height / 2);
 			return new Phaser.Point(x, y);
@@ -693,8 +697,9 @@ module MegaManX
 
 		getBottomBackward(relative: boolean)
 		{
+			var emptyRectangle: PIXI.Rectangle = new PIXI.Rectangle(0, 0, 0, 0);
 			var bounds = this.getBounds();
-			var position = (relative) ? Player.emptyRectangle : this.position;
+			var position = (relative) ? emptyRectangle : this.position;
 			var x = (position.x) - ((bounds.width / 2) * this.getFacingDirection());
 			var y = (position.y) + (bounds.height / 2);
 			return new Phaser.Point(x, y);

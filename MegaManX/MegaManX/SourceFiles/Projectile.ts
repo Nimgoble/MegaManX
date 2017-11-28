@@ -21,7 +21,8 @@
 		creationAnimation: Phaser.Animation;
 		flyingAnimation: Phaser.Animation;
 		deathAnimation: Phaser.Animation;
-		constructor(game: Phaser.Game, x: number, y: number, projectileArguments: ProjectileArguments, key?: any, frame?: any)
+		damagePoints?: number;
+		constructor(game: Phaser.Game, x: number, y: number, projectileArguments: ProjectileArguments, key?: any, frame?: any, damagePoints?: number)
 		{
 			super(game, x, y, key, frame);
 			this.anchor.setTo(0.5, 0.5);
@@ -36,6 +37,7 @@
 				this.body.velocity.y = projectileArguments.yVelocity;
 			this.body.allowGravity = false;
 			this.projectileArguments = projectileArguments;
+			this.damagePoints = damagePoints;
 
 			this.scale.x = projectileArguments.xScale;
 
@@ -49,8 +51,32 @@
 			{
 				this.deathAnimation = this.projectileArguments.definition.deathAnimation.addToAnimationManager(this.animations);
 			}
+
+			this.body.onCollide = new Phaser.Signal();
+			this.body.onCollide.add(this.OnHit, this);
 				
 			game.add.existing(this);	
+		}
+
+		OnProcessHit(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
+		{
+			return false;
+		}
+
+		OnHit(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
+		{
+			if (obj2 instanceof BaseEnemy)
+			{
+				var enemy = obj2 as BaseEnemy;
+				enemy.OnHit(this);
+				if (this.damagePoints !== null)
+				{
+					this.damagePoints -= enemy.maxHealth;
+					if (this.damagePoints <= 0)
+						this.destroy();
+				}
+			}
+			return false;
 		}
 
 		initProjectile()

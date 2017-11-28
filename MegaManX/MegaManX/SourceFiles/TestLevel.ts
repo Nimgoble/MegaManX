@@ -85,6 +85,10 @@ module MegaManX
 			{
 				var projectile = castedGame.projectiles[i];
 				this.game.physics.arcade.collide(this.tiles, projectile, projectile.collisionCallback, null, projectile);
+				this.game.physics.arcade.collide(projectile, this.player/*, this.player.collisionCallback, null, this.player*/);
+				this.game.physics.arcade.collide(projectile, this.bunny/*, this.bunny.OnHit, null, this.bunny*/);
+				this.game.physics.arcade.collide(projectile, this.player, projectile.OnHit, projectile.OnProcessHit, projectile);
+				this.game.physics.arcade.collide(projectile, this.bunny, projectile.OnHit, projectile.OnProcessHit, projectile);
 			}
 
 			for (var i = 0; i < castedGame.projectiles.length; ++i)
