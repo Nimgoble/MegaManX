@@ -33,29 +33,27 @@
 	{
 		private currentEnemy: T;
 		private ctor: IEnemyConstructor<BaseEnemy>;
-
+		private wasOutOfCameraBounds: boolean = false;
 		//Debug stuff:
-		private nextSpawnTime: number = 0.0;
+		//private nextSpawnTime: number = 0.0;
 		constructor(game: Phaser.Game, x: number, y: number, ctor: IEnemyConstructor<BaseEnemy>)
 		{
 			super(game, x, y);
 			this.ctor = ctor;
 			this.currentEnemy = null;
+			this.wasOutOfCameraBounds = true; //We want to spawn an enemy on startup whether we were out of bounds or not
 		}
 
 		update()
 		{
-			if (this.currentEnemy === null)
+			if (this.currentEnemy === null && this.wasOutOfCameraBounds && this.inCamera)
 			{
-				if (this.nextSpawnTime < this.game.time.totalElapsedSeconds())
-					this.SpawnEnemy();
+				this.wasOutOfCameraBounds = false;
+				this.SpawnEnemy();
 				return;
 			}
-
-			if (this.currentEnemy.pendingDestroy)
-			{
-				this.currentEnemy = null;
-			}
+			else if (!this.wasOutOfCameraBounds && !this.inCamera)
+				this.wasOutOfCameraBounds = true;
 		}
 
 		OnEnterBounds(obj1: any)
@@ -71,7 +69,7 @@
 			this.currentEnemy = new this.ctor(this.game, this.x, this.y) as T;
 			this.currentEnemy.events.onDestroy.add(this.OnEnemyDestroyed, this);
 			this.game.add.existing(this.currentEnemy);
-			this.nextSpawnTime = this.game.time.totalElapsedSeconds() + 5.0;
+			//this.nextSpawnTime = this.game.time.totalElapsedSeconds() + 5.0;
 		}
 
 		OnEnemyDestroyed(obj1: any)
