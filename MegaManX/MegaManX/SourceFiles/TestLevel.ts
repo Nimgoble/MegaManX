@@ -8,6 +8,7 @@ module MegaManX
 		slope: Phaser.Group;
 		bunny: MegaManX.Bunny;
 		pauseKey: Phaser.Key;
+		bunnySpawner: EnemySpawner<Bunny>;
 
         create()
 		{
@@ -46,7 +47,8 @@ module MegaManX
             this.slope.angle = -15;
 
 			this.player = new MegaManX.Player(this.game, 64, 0);
-			this.bunny = new Bunny(this.game, 128, 332);
+			this.bunnySpawner = new EnemySpawner<Bunny>(this.game, 128, 332, Bunny);
+			//this.bunny = new Bunny(this.game, 128, 332);
 
             this.game.camera.follow(this.player);
             this.player.teleportToGround();
@@ -78,17 +80,17 @@ module MegaManX
 
             //this.game.physics.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
 			//console.log("player y velocity before physics collide: " + this.player.body.velocity.y);
-            //this.game.physics.arcade.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
+			//this.game.physics.arcade.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
+			var bunny = this.bunnySpawner.GetCurrentEnemy();
 			this.game.physics.arcade.collide(this.tiles, this.player, this.player.collisionCallback, null, this.player);
-			this.game.physics.arcade.collide(this.tiles, this.bunny, this.bunny.OnCollision, null, this.bunny);
+			if(bunny !==  null)
+				this.game.physics.arcade.collide(this.tiles, bunny, bunny.OnCollision, null, bunny);
 			for (var i = 0; i < castedGame.projectiles.length; ++i)
 			{
 				var projectile = castedGame.projectiles[i];
 				this.game.physics.arcade.collide(this.tiles, projectile, projectile.collisionCallback, null, projectile);
-				this.game.physics.arcade.collide(projectile, this.player/*, this.player.collisionCallback, null, this.player*/);
-				this.game.physics.arcade.collide(projectile, this.bunny/*, this.bunny.OnHit, null, this.bunny*/);
-				this.game.physics.arcade.collide(projectile, this.player, projectile.OnHit, projectile.OnProcessHit, projectile);
-				this.game.physics.arcade.collide(projectile, this.bunny, projectile.OnHit, projectile.OnProcessHit, projectile);
+				this.game.physics.arcade.overlap(projectile, this.player, projectile.OnHit, null, projectile);
+				this.game.physics.arcade.overlap(projectile, bunny, projectile.OnHit, null, projectile);
 			}
 
 			for (var i = 0; i < castedGame.projectiles.length; ++i)
@@ -121,7 +123,11 @@ module MegaManX
         {
 			//this.game.debug.spriteBounds(this.player, 'blue', false);
 			//this.game.debug.body(this.player, 'red', false);
-			this.game.debug.body(this.bunny, 'red', false);
+			var bunny = this.bunnySpawner.GetCurrentEnemy();
+			if(bunny !== null)
+				this.game.debug.body(bunny, 'red', false);
+
+			this.game.debug.body(this.bunnySpawner, 'red', false);
 			//this.renderCrossForPoint(this.player.getTopForward(false), 10, 'blue');
 			//this.renderCrossForPoint(this.player.getBottomForward(false), 10, 'blue');
 			//this.renderCrossForPoint(this.player.getTopBackward(false), 10, 'blue');

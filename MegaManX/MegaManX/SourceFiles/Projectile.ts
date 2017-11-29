@@ -58,11 +58,6 @@
 			game.add.existing(this);	
 		}
 
-		OnProcessHit(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
-		{
-			return false;
-		}
-
 		OnHit(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
 		{
 			if (obj2 instanceof BaseEnemy)
@@ -115,6 +110,7 @@
 
 		onOutOfBounds(context: Phaser.Sprite)
 		{
+			console.log(context.name + ' exited the world bounds');
 			context.destroy();
 		}
 	}

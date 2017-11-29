@@ -1,18 +1,21 @@
 ﻿module MegaManX 
 {
-	export class BaseEnemy extends Phaser.Sprite
+	export class BaseEnemy extends Phaser.Sprite /*implements IEnemyConstructor<BaseEnemy>*/
 	{
 		health: number;
 		maxHealth: number;
 		ClassName: string = this.name;
 		animatedSprite: AnimatedSprite;
 		otherSFX: Phaser.Sound;
-		constructor(game: Phaser.Game, x: number, y: number, key?: any, frame?: any, maxHealth?: number, currentHealth?: number)
+		constructor(game: Phaser.Game, x: number, y: number, ...args: any[])
 		{
-			super(game, x, y, null, frame);
+			super(game, x, y, null, args[1]);
 			this.anchor.setTo(0.5, 0.5);
 			game.physics.enable(this, Phaser.Physics.ARCADE);
 
+			var maxHealth: number = args[2];
+			var currentHealth: number = (args.length >= 4) ? args[3] : null;
+			var key: string = args[0];
 			if (maxHealth !== null)
 				this.maxHealth = maxHealth;
 

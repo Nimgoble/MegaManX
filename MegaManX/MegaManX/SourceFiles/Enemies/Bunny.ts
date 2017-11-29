@@ -8,7 +8,7 @@
 		static hopFrequency: number = 1.25;
 		static jumpVelocityX: number = 50;
 
-		constructor(game: Phaser.Game, x: number, y: number)
+		constructor(game: Phaser.Game, x: number, y: number, ...args: any[])
 		{
 			super(game, x, y, 'bunny', null, 25);
 			this.animatedSprite.currentAnimation = this.animatedSprite.animations.add('idle', Phaser.Animation.generateFrameNames('bunny', 1, 1, '', 4), 1, true);

@@ -63,6 +63,7 @@
     <TypeScriptCompile Include="SourceFiles\Effect.ts" />
     <TypeScriptCompile Include="SourceFiles\EffectEmitter.ts" />
     <TypeScriptCompile Include="SourceFiles\Enemies\Bunny.ts" />
+    <TypeScriptCompile Include="SourceFiles\EnemySpawner.ts" />
     <TypeScriptCompile Include="SourceFiles\Game.ts" />
     <TypeScriptCompile Include="SourceFiles\HealthBar.ts" />
     <TypeScriptCompile Include="SourceFiles\MainMenu.ts" />
