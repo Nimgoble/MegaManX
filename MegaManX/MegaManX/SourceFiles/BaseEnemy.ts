@@ -7,6 +7,9 @@
 		ClassName: string = this.name;
 		animatedSprite: AnimatedSprite;
 		otherSFX: Phaser.Sound;
+
+		static hitFlashTime: number = 0.15;
+
 		constructor(game: Phaser.Game, x: number, y: number, ...args: any[])
 		{
 			super(game, x, y, null, args[1]);
@@ -45,6 +48,16 @@
 
 			if (this.health <= 0)
 				this.destroy();//TODO: Fucking fix this with a death animation, or something
+			else
+			{
+				this.animatedSprite.tint = 0xFF0000;
+				this.game.time.events.add(Phaser.Timer.SECOND * BaseEnemy.hitFlashTime, this.FinishSpriteFlash, this);
+			}
+		}
+
+		FinishSpriteFlash()
+		{
+			this.animatedSprite.tint = 0xFFFFFF;
 		}
 
 		OnCollision(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
