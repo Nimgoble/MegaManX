@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas>
+  <SubTexture Name="explosion0001" X="5" Y="5" Width="16" Height="16" />
+  <SubTexture Name="explosion0002" X="31" Y="5" Width="32" Height="32" />
+  <SubTexture Name="explosion0003" X="73" Y="5" Width="28" Height="24" />
+  <SubTexture Name="explosion0004" X="111" Y="5" Width="30" Height="27" />
+  <SubTexture Name="explosion0005" X="151" Y="5" Width="32" Height="27" />
+  <SubTexture Name="explosion0006" X="193" Y="5" Width="32" Height="30" />
+  <SubTexture Name="explosion0007" X="235" Y="5" Width="32" Height="23" />
+  <SubTexture Name="explosion0008" X="277" Y="5" Width="32" Height="16" />
+</TextureAtlas>

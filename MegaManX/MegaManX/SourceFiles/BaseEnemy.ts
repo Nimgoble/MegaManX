@@ -1,6 +1,6 @@
 ﻿module MegaManX 
 {
-	export class BaseEnemy extends Phaser.Sprite /*implements IEnemyConstructor<BaseEnemy>*/
+	export class BaseEnemy extends Phaser.Sprite
 	{
 		health: number;
 		maxHealth: number;
@@ -47,7 +47,9 @@
 			console.log(this.name + ' was hit by a projectile, doing ' + hitter.damagePoints.toString() + ' damage');
 
 			if (this.health <= 0)
+			{
 				this.destroy();//TODO: Fucking fix this with a death animation, or something
+			}
 			else
 			{
 				this.animatedSprite.tint = 0xFF0000;

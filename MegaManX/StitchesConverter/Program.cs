@@ -41,7 +41,9 @@ namespace StitchesConverter
 
             XmlSerializer serializer = new XmlSerializer(typeof(TextureAtlas));
             TextWriter writer = new StreamWriter(output);
-            serializer.Serialize(writer, atlas);
+            XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+            ns.Add(string.Empty, string.Empty);
+            serializer.Serialize(writer, atlas, ns);
             writer.Close();
         }
 
