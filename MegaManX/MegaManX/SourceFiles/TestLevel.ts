@@ -83,14 +83,19 @@ module MegaManX
 			//this.game.physics.arcade.collide(this.player, this.tiles, this.player.collisionCallback, null, this.player);
 			var bunny = this.bunnySpawner.GetCurrentEnemy();
 			this.game.physics.arcade.collide(this.tiles, this.player, this.player.collisionCallback, null, this.player);
-			if(bunny !==  null)
+			if (bunny !== null)
+			{
 				this.game.physics.arcade.collide(this.tiles, bunny, bunny.OnCollision, null, bunny);
+				this.game.physics.arcade.overlap(bunny, this.player, this.player.OnHit, null, this.player);
+			}
+				
 			for (var i = 0; i < castedGame.projectiles.length; ++i)
 			{
 				var projectile = castedGame.projectiles[i];
 				this.game.physics.arcade.collide(this.tiles, projectile, projectile.collisionCallback, null, projectile);
 				this.game.physics.arcade.overlap(projectile, this.player, projectile.OnHit, null, projectile);
-				this.game.physics.arcade.overlap(projectile, bunny, projectile.OnHit, null, projectile);
+				if(bunny !== null)
+					this.game.physics.arcade.overlap(projectile, bunny, projectile.OnHit, null, projectile);
 			}
 
 			for (var i = 0; i < castedGame.projectiles.length; ++i)

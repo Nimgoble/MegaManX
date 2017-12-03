@@ -22,7 +22,8 @@
 		flyingAnimation: Phaser.Animation;
 		deathAnimation: Phaser.Animation;
 		damagePoints?: number;
-		constructor(game: Phaser.Game, x: number, y: number, projectileArguments: ProjectileArguments, key?: any, frame?: any, damagePoints?: number)
+		instigator: Phaser.Sprite;
+		constructor(game: Phaser.Game, x: number, y: number, projectileArguments: ProjectileArguments, instigator: Phaser.Sprite, key?: any, frame?: any, damagePoints?: number)
 		{
 			super(game, x, y, key, frame);
 			this.anchor.setTo(0.5, 0.5);
@@ -60,6 +61,9 @@
 
 		OnHit(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
 		{
+			if (this.instigator === obj2)
+				return false;
+
 			if (obj2 instanceof BaseEnemy)
 			{
 				var enemy = obj2 as BaseEnemy;
@@ -68,8 +72,13 @@
 				{
 					this.damagePoints -= enemy.maxHealth;
 					if (this.damagePoints <= 0)
-						this.destroy();
+						this.Die();
 				}
+			}
+			if (obj2 instanceof Player)
+			{
+				var player = obj2 as Player;
+				player.OnHit(this);
 			}
 			return false;
 		}
@@ -77,9 +86,7 @@
 		initProjectile()
 		{
 			if (this.creationAnimation !== null && this.creationAnimation !== undefined)
-			{
 				this.creationAnimation.play();
-			}
 			else
 				this.flyingAnimation.play();
 		}
@@ -90,6 +97,11 @@
 		}
 
 		collisionCallback(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
+		{
+			this.Die();
+		}
+
+		Die()
 		{
 			if (this.isDead || this.isDying)
 				return;
@@ -102,6 +114,13 @@
 
 		update()
 		{
+			if (!this.inCamera)
+			{
+				//Die immediately
+				this.destroy();
+				return;
+			}
+
 			if (this.isDying && this.animations.currentAnim !== null && this.animations.currentAnim.isFinished && !this.isDead)
 			{
 				this.isDead = true;

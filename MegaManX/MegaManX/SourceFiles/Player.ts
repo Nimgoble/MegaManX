@@ -309,7 +309,7 @@ module MegaManX
 			var damage = 5 * (type + 1);
 			var projectileArguments = new ProjectileArguments(this.projectileDefinitions[type], (750 * direction), 0);
 			projectileArguments.xScale = direction;
-			var bullet = new Projectile(this.game, x, blasterY, projectileArguments, 'player_shoot', null, damage);
+			var bullet = new Projectile(this.game, x, blasterY, projectileArguments, this, 'player_shoot', null, damage);
 			//We want the middle of the sprite to be in line with the blaster:
 			var halfHeight = bullet.height / 2;
 			bullet.y -= halfHeight;
@@ -442,7 +442,17 @@ module MegaManX
                 //else
                 //    this.wallSliding = false;
             }
-        }
+		}
+
+		OnHit(obj: Phaser.Sprite)
+		{
+			//TODO:
+			//-Reduce health
+			//-Do 'hurt' animation
+			//-Play 'hurt' sound
+			//-Flash sprite
+			//-Become invulnerable for a certain amount of time.
+		}
 
         teleportToGround()
         {
