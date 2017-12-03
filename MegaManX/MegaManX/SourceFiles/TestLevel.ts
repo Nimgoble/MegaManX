@@ -143,7 +143,11 @@ module MegaManX
 			{
 				var projectile = castedGame.projectiles[i];
 				if (projectile !== null && projectile !== undefined && (!projectile.isDead || !projectile.isDying) && projectile.worldTransform)
+				{
 					this.game.debug.spriteBounds(projectile, 'red', false);
+					this.game.debug.body(projectile, 'purple', false);
+				}
+					
 			}
             //this.game.debug.spriteInfo(this.player, 32, 32);
 

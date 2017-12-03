@@ -57,6 +57,7 @@
 
 			this.body.onCollide = new Phaser.Signal();
 			this.body.onCollide.add(this.OnHit, this);
+			this.body.syncBounds = true;
 				
 			game.add.existing(this);	
 		}
@@ -133,6 +134,7 @@
 			//	this.destroy();
 			//	return;
 			//}
+			
 
 			if (this.isDying && this.animations.currentAnim !== null && this.animations.currentAnim.isFinished && !this.isDead)
 			{
