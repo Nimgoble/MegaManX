@@ -25,8 +25,11 @@ module MegaManX
 		animatedSprite: AnimatedSprite;
 		chargeStartTime: number;
 		currentShootStanceTimeout: number;
+		health: number = 25;
+		maxHealth: number = 25;
 		healthBar: HealthBar;
 		slideEffectEmitter: EffectEmitter;
+		nextTakeDamageTime: number;
 
 		shootSounds: Phaser.Sound[];
 		projectileDefinitions: ProjectileDefinition[];
@@ -63,6 +66,7 @@ module MegaManX
 			this.currentShootStanceTimeout = 0.0;
 			this.lastChargeShotCallbackTime = 0.0;
 			this.nextDashTimeout = 0.0;
+			this.nextTakeDamageTime = 0.0;
 
 			game.physics.enable(this, Phaser.Physics.ARCADE);
 			this.shootSounds = new Array(3);
@@ -146,7 +150,7 @@ module MegaManX
 			this.animatedSprite.animations.add('dash', Phaser.Animation.generateFrameNames('dash', 1, 2, '', 4), 15, false);
 			this.animatedSprite.animations.add('dashShoot', Phaser.Animation.generateFrameNames('dashshoot', 1, 2, '', 4), 15, false);
 
-			this.healthBar = new HealthBar(game, 0, 50, null, null, 25, 10);
+			this.healthBar = new HealthBar(game, 0, 50, this, null, null);
 			game.add.existing(this.healthBar);
 
 			this.jumpKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
@@ -446,6 +450,13 @@ module MegaManX
 
 		OnHit(obj: Phaser.Sprite)
 		{
+			if (this.nextTakeDamageTime > this.game.time.totalElapsedSeconds())
+				return;
+
+			if (this.health > 0)
+				this.health -= 2;
+
+			this.nextTakeDamageTime = this.game.time.totalElapsedSeconds() + 1;
 			//TODO:
 			//-Reduce health
 			//-Do 'hurt' animation

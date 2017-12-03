@@ -27,7 +27,6 @@
 			this.otherSFX = game.add.audio('sfx');
 			this.otherSFX.allowMultiple = true;
 			this.otherSFX.addMarker('enemyHit', 37.0, 0.5);
-			this.otherSFX.addMarker('enemyKilled', 64.0, 0.5);
 
 			game.add.existing(this);
 
@@ -64,7 +63,7 @@
 
 		OnCollision(obj1: Phaser.Sprite, obj2: Phaser.Sprite)
 		{
-
+			//Do we need this?
 		}
 	}
 }

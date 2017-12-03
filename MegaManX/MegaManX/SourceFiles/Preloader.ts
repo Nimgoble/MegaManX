@@ -19,7 +19,7 @@ module MegaManX
 			this.load.atlasXML('bat', 'Content/bat_sheet.png', 'Content/bat_sheet.xml', null);
 			this.load.atlasXML('bunny', 'Content/bunny_sheet.png', 'Content/bunny_sheet.xml', null);
 			this.load.atlasXML('explosion', 'Content/explosion_sheet.png', 'Content/explosion_sheet.xml', null);
-			//this.healthLoader = this.load.atlasXML('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.json');
+			this.healthLoader = this.load.atlasXML('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.xml');
 //			this.healthLoader = this.load.atlasJSONArray('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.json');
 			this.load.image('health_top', 'Content/health_top.png');
 			this.load.image('health_bottom', 'Content/health_bottom.png');

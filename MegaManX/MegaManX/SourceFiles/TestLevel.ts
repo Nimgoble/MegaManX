@@ -92,10 +92,10 @@ module MegaManX
 			for (var i = 0; i < castedGame.projectiles.length; ++i)
 			{
 				var projectile = castedGame.projectiles[i];
-				this.game.physics.arcade.collide(this.tiles, projectile, projectile.collisionCallback, null, projectile);
-				this.game.physics.arcade.overlap(projectile, this.player, projectile.OnHit, null, projectile);
+				this.game.physics.arcade.collide(this.tiles, projectile, projectile.collisionCallback, projectile.CanDoDamage, projectile);
+				this.game.physics.arcade.overlap(projectile, this.player, projectile.OnHit, projectile.CanDoDamage, projectile);
 				if(bunny !== null)
-					this.game.physics.arcade.overlap(projectile, bunny, projectile.OnHit, null, projectile);
+					this.game.physics.arcade.overlap(projectile, bunny, projectile.OnHit, projectile.CanDoDamage, projectile);
 			}
 
 			for (var i = 0; i < castedGame.projectiles.length; ++i)

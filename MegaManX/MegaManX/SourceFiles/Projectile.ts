@@ -23,6 +23,7 @@
 		deathAnimation: Phaser.Animation;
 		damagePoints?: number;
 		instigator: Phaser.Sprite;
+		currentHealth?: number;
 		constructor(game: Phaser.Game, x: number, y: number, projectileArguments: ProjectileArguments, instigator: Phaser.Sprite, key?: any, frame?: any, damagePoints?: number)
 		{
 			super(game, x, y, key, frame);
@@ -38,7 +39,7 @@
 				this.body.velocity.y = projectileArguments.yVelocity;
 			this.body.allowGravity = false;
 			this.projectileArguments = projectileArguments;
-			this.damagePoints = damagePoints;
+			this.currentHealth = this.damagePoints = damagePoints;
 
 			this.scale.x = projectileArguments.xScale;
 
@@ -68,14 +69,14 @@
 			{
 				var enemy = obj2 as BaseEnemy;
 				enemy.OnHit(this);
-				if (this.damagePoints !== null)
+				if (this.currentHealth !== null)
 				{
-					this.damagePoints -= enemy.maxHealth;
-					if (this.damagePoints <= 0)
+					this.currentHealth -= enemy.maxHealth;
+					if (this.currentHealth <= 0)
 						this.Die();
 				}
 			}
-			if (obj2 instanceof Player)
+			else if (obj2 instanceof Player)
 			{
 				var player = obj2 as Player;
 				player.OnHit(this);
@@ -101,10 +102,21 @@
 			this.Die();
 		}
 
+		IsDeadOrDying()
+		{
+			return this.isDead || this.isDying;
+		}
+
+		CanDoDamage()
+		{
+			return !this.IsDeadOrDying();
+		}
+
 		Die()
 		{
 			if (this.isDead || this.isDying)
 				return;
+			this.body.velocity.x = 0;
 			this.isDying = true;
 			if (this.deathAnimation !== null && this.deathAnimation !== undefined)
 				this.deathAnimation.play();
@@ -114,12 +126,12 @@
 
 		update()
 		{
-			if (!this.inCamera)
-			{
-				//Die immediately
-				this.destroy();
-				return;
-			}
+			//if (!this.inCamera)
+			//{
+			//	//Die immediately
+			//	this.destroy();
+			//	return;
+			//}
 
 			if (this.isDying && this.animations.currentAnim !== null && this.animations.currentAnim.isFinished && !this.isDead)
 			{
