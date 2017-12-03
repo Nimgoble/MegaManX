@@ -10,15 +10,15 @@ namespace StitchesConverter
     [Serializable]
     public class SubTexture
     {
-        [XmlAttribute]
+        [XmlAttribute("name")]
         public string Name { get; set; }
-        [XmlAttribute]
+        [XmlAttribute("x")]
         public string X { get; set; }
-        [XmlAttribute]
+        [XmlAttribute("y")]
         public string Y { get; set; }
-        [XmlAttribute]
+        [XmlAttribute("width")]
         public string Width { get; set; }
-        [XmlAttribute]
+        [XmlAttribute("height")]
         public string Height { get; set; }
     }
 }

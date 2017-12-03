@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextureAtlas>
-  <SubTexture Name="explosion0001" X="5" Y="5" Width="16" Height="16" />
-  <SubTexture Name="explosion0002" X="31" Y="5" Width="32" Height="32" />
-  <SubTexture Name="explosion0003" X="73" Y="5" Width="28" Height="24" />
-  <SubTexture Name="explosion0004" X="111" Y="5" Width="30" Height="27" />
-  <SubTexture Name="explosion0005" X="151" Y="5" Width="32" Height="27" />
-  <SubTexture Name="explosion0006" X="193" Y="5" Width="32" Height="30" />
-  <SubTexture Name="explosion0007" X="235" Y="5" Width="32" Height="23" />
-  <SubTexture Name="explosion0008" X="277" Y="5" Width="32" Height="16" />
+<TextureAtlas ImagePath="explosion_sheet.png">
+  <SubTexture name="explosion0001" x="5" y="5" width="16" height="16" />
+  <SubTexture name="explosion0002" x="31" y="5" width="32" height="32" />
+  <SubTexture name="explosion0003" x="73" y="5" width="28" height="24" />
+  <SubTexture name="explosion0004" x="111" y="5" width="30" height="27" />
+  <SubTexture name="explosion0005" x="151" y="5" width="32" height="27" />
+  <SubTexture name="explosion0006" x="193" y="5" width="32" height="30" />
+  <SubTexture name="explosion0007" x="235" y="5" width="32" height="23" />
+  <SubTexture name="explosion0008" x="277" y="5" width="32" height="16" />
 </TextureAtlas>

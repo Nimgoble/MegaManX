@@ -28,6 +28,8 @@
     <Content Include="Content\bat_sheet.xml" />
     <Content Include="Content\bunny_sheet.png" />
     <Content Include="Content\bunny_sheet.xml" />
+    <Content Include="Content\explosion_sheet.png" />
+    <Content Include="Content\explosion_sheet.xml" />
     <Content Include="Content\health_sheet.png" />
     <Content Include="Content\health_sheet.xml" />
     <Content Include="Content\loader.png" />

@@ -27,8 +27,7 @@
 			this.otherSFX = game.add.audio('sfx');
 			this.otherSFX.allowMultiple = true;
 			this.otherSFX.addMarker('enemyHit', 37.0, 0.5);
-			//this.otherSFX.addMarker('jumpLand', 22.5, 0.5);
-			//this.otherSFX.addMarker('dash', 23.75, 0.5);
+			this.otherSFX.addMarker('enemyKilled', 64.0, 0.5);
 
 			game.add.existing(this);
 
@@ -42,16 +41,17 @@
 			if (hitter.damagePoints !== null)
 				this.health -= hitter.damagePoints;
 
-			this.otherSFX.play('enemyHit');
-
 			console.log(this.name + ' was hit by a projectile, doing ' + hitter.damagePoints.toString() + ' damage');
 
 			if (this.health <= 0)
 			{
-				this.destroy();//TODO: Fucking fix this with a death animation, or something
+				EffectLibrary.Instance.PlayEffect(this.x, this.y, 'explosion');
+				SoundEffectLibrary.Instance.PlaySoundEffect('enemyKilled');
+				this.destroy();
 			}
 			else
 			{
+				this.otherSFX.play('enemyHit');
 				this.animatedSprite.tint = 0xFF0000;
 				this.game.time.events.add(Phaser.Timer.SECOND * BaseEnemy.hitFlashTime, this.FinishSpriteFlash, this);
 			}

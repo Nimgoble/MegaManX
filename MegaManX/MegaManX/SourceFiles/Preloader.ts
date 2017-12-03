@@ -44,6 +44,9 @@ module MegaManX
 			EffectLibrary.Instance.Init(this.game);
 			EffectLibrary.Instance.AddEffect('wallKick', new AnimationArguments('wallKick', ['wallEffects0001'], 15, false, null, 'wallEffects'));
 			EffectLibrary.Instance.AddEffect('wallSlideSmoke', new AnimationArguments('wallSlideSmoke', Phaser.Animation.generateFrameNames('wallEffects', 2, 7, '', 4), 15, false, null, 'wallEffects'));
+			EffectLibrary.Instance.AddEffect('explosion', new AnimationArguments('explosion', Phaser.Animation.generateFrameNames('explosion', 1, 8, '', 4), 15, false, null, 'explosion'));
+			SoundEffectLibrary.Instance.Init(this.game, 'sfx');
+			SoundEffectLibrary.Instance.AddSoundEffect('enemyKilled', 64.5, 0.5);
         }
 
         create()
