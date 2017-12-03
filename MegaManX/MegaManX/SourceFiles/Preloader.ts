@@ -19,12 +19,13 @@ module MegaManX
 			this.load.atlasXML('bat', 'Content/bat_sheet.png', 'Content/bat_sheet.xml', null);
 			this.load.atlasXML('bunny', 'Content/bunny_sheet.png', 'Content/bunny_sheet.xml', null);
 			this.load.atlasXML('explosion', 'Content/explosion_sheet.png', 'Content/explosion_sheet.xml', null);
-			this.healthLoader = this.load.atlasXML('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.xml');
+			//this.load.atlasXML('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.xml', null);
+			this.load.atlasXML('health_ui', 'Content/health_sheet2.png', 'Content/health_sheet2.xml', null);
 //			this.healthLoader = this.load.atlasJSONArray('health_ui', 'Content/health_sheet.png', 'Content/health_sheet.json');
-			this.load.image('health_top', 'Content/health_top.png');
-			this.load.image('health_bottom', 'Content/health_bottom.png');
-			this.load.image('health_piece_empty', 'Content/health_piece_empty.png');
-			this.load.image('health_piece_full', 'Content/health_piece_full.png');
+			//this.load.image('health_top', 'Content/health_top.png');
+			//this.load.image('health_bottom', 'Content/health_bottom.png');
+			//this.load.image('health_piece_empty', 'Content/health_piece_empty.png');
+			//this.load.image('health_piece_full', 'Content/health_piece_full.png');
             this.load.image('genericTile', 'Content/testTile.png');
             //this.load.spritesheet('button', 'Content/button.png', 185, 52, 3);
             //this.load.image('logo', 'assets/logo.png');

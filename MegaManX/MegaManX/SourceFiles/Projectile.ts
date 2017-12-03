@@ -28,6 +28,7 @@
 		{
 			super(game, x, y, key, frame);
 			this.anchor.setTo(0.5, 0.5);
+			this.instigator = instigator;
 			this.isDying = false;
 			this.isDead = false;
 			game.physics.enable(this, Phaser.Physics.ARCADE);

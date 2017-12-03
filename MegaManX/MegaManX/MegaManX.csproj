@@ -80,7 +80,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Sounds\sounds.json" />
-    <Content Include="Content\health_sheet.json" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

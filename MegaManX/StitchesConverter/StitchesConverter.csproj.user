@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>"F:\Downloads\stylesheet.txt" "F:\Programming\Github\MegaManX\MegaManX\MegaManX\Content\explosion_sheet.xml"</StartArguments>
+    <StartArguments>"D:\Downloads\stylesheet.txt" "D:\Programming\GitHub\MegaManX\MegaManX\MegaManX\Content\health_sheet.xml"</StartArguments>
   </PropertyGroup>
 </Project>
