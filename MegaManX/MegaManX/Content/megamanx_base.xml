@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with TexturePacker http://www.codeandweb.com/texturepacker-->
 <!-- $TexturePacker:SmartUpdate:7eab1166bea139f5e44c0a6424866995:2df696cd863f949c34787efd02e14aad:0f08bde115c507aea977e2312d444f7a$ -->
-<TextureAtlas imagePath="megamanx_base.png">
+<TextureAtlas ImagePath="megamanx_base.png">
     <SubTexture name="bullet0001" x="41" y="90" width="6" height="6"/>
     <SubTexture name="bullet0002" x="41" y="80" width="8" height="8"/>
     <SubTexture name="bullet0003" x="242" y="15" width="9" height="9"/>
