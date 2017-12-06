@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas ImagePath="hurt_sheet.png">
+	<SubTexture name="hurt0001" x="0" y="48" width="26" height="36"/>
+	<SubTexture name="hurt0002" x="31" y="85" width="29" height="34"/>
+	<SubTexture name="hurt0003" x="61" y="85" width="31" height="33"/>
+	<SubTexture name="hurt0004" x="0" y="0" width="34" height="47"/>
+	<SubTexture name="hurt0005" x="27" y="48" width="28" height="33"/>
+	<SubTexture name="hurt0006" x="35" y="0" width="33" height="47"/>
+	<SubTexture name="hurt0007" x="0" y="85" width="30" height="34"/>
+	<SubTexture name="hurt0008" x="69" y="0" width="33" height="47"/>
+	<SubTexture name="hurt0009" x="69" y="48" width="31" height="34"/>
+</TextureAtlas>

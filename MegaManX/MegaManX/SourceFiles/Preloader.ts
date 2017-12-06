@@ -14,6 +14,7 @@ module MegaManX
             //  Load our actual games assets
             this.load.image('mainmenu', 'Content/mainmenu.jpg');
 			this.load.atlasXML('megamanx', 'Content/megamanx_base.png', 'Content/megamanx_base.xml', null);
+			this.load.atlasXML('player_hurt', 'Content/hurt_sheet.png', 'Content/hurt_sheet.xml', null);
 			this.load.atlasXML('player_shoot', 'Content/shoot_sheet2.png', 'Content/shoot_sheet2.xml', null);
 			this.load.atlasXML('wallEffects', 'Content/wallEffects_sheet.png', 'Content/wallEffects_sheet.xml', null);
 			this.load.atlasXML('bat', 'Content/bat_sheet.png', 'Content/bat_sheet.xml', null);
