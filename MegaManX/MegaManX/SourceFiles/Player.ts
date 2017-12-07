@@ -57,6 +57,7 @@ module MegaManX
 		chargeStartSound: Phaser.Sound;
 		chargeLoopSound: Phaser.Sound;
 		otherSFX: Phaser.Sound;
+		hitSound: Phaser.Sound;
 
         constructor(game: Phaser.Game, x: number, y: number)
         {
@@ -97,6 +98,7 @@ module MegaManX
 			this.chargeStartSound = game.add.audio('shotCharge_Start');
 			this.chargeLoopSound = game.add.audio('shotCharge_Loop');
 			this.chargeLoopSound.loop = true;
+			this.hitSound = game.add.audio('player_hit');
 
 			this.otherSFX = game.add.audio('sfx');
 			this.otherSFX.allowMultiple = true;
@@ -149,6 +151,7 @@ module MegaManX
 			this.animatedSprite.animations.add('teleportFinish', Phaser.Animation.generateFrameNames('teleport', 2, 8, '', 4), 30, false);
 			this.animatedSprite.animations.add('dash', Phaser.Animation.generateFrameNames('dash', 1, 2, '', 4), 15, false);
 			this.animatedSprite.animations.add('dashShoot', Phaser.Animation.generateFrameNames('dashshoot', 1, 2, '', 4), 15, false);
+			this.animatedSprite.animations.add('hurt', Phaser.Animation.generateFrameNames('hurt', 1, 9, '', 4), 15, false);
 
 			this.healthBar = new HealthBar(game, 0, 50, this, null, null);
 			game.add.existing(this.healthBar);
@@ -377,6 +380,8 @@ module MegaManX
 
         checkMovement()
 		{
+			if (this.teleporting || (this.animatedSprite.getCurrentAnimationName() === 'hurt' && this.animatedSprite.currentAnimation.isFinished === false))
+				return;
 			//Move left/right
 			var direction = this.moveLeftKey.isDown ? -1 : (this.moveRightKey.isDown ? 1 : 0);
 			//If we were wallsliding and then pressed the opposite direction, then we are no long wallsliding
@@ -453,16 +458,23 @@ module MegaManX
 			if (this.nextTakeDamageTime > this.game.time.totalElapsedSeconds())
 				return;
 
+			//-Reduce health
 			if (this.health > 0)
 				this.health -= 2;
 
-			this.nextTakeDamageTime = this.game.time.totalElapsedSeconds() + 1;
-			//TODO:
-			//-Reduce health
 			//-Do 'hurt' animation
-			//-Play 'hurt' sound
 			//-Flash sprite
+			this.animatedSprite.playAnimation('hurt');
+			this.body.velocity.x = 50 * -(this.scale.x);
+			this.body.velocity.y = -50;
+			this.hitSound.play();
+
+			//TODO:
+			//-Play 'hurt' sound
+
 			//-Become invulnerable for a certain amount of time.
+			this.nextTakeDamageTime = this.game.time.totalElapsedSeconds() + 1;
+
 		}
 
         teleportToGround()
@@ -504,7 +516,7 @@ module MegaManX
                     return;
                 }
 			}
-			else if (currentAnimationName === 'teleportFinish')
+			else if (currentAnimationName === 'teleportFinish' || currentAnimationName === 'hurt')
             {
 				if (this.animatedSprite.currentAnimation.isFinished === false)
                 {

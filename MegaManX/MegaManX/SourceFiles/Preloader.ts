@@ -13,7 +13,7 @@ module MegaManX
 
             //  Load our actual games assets
             this.load.image('mainmenu', 'Content/mainmenu.jpg');
-			this.load.atlasXML('megamanx', 'Content/megamanx_base.png', 'Content/megamanx_base.xml', null);
+			this.load.atlasXML('megamanx', 'Content/megamanx_base_concat.png', 'Content/megamanx_base_concat.xml', null);
 			this.load.atlasXML('player_hurt', 'Content/hurt_sheet.png', 'Content/hurt_sheet.xml', null);
 			this.load.atlasXML('player_shoot', 'Content/shoot_sheet2.png', 'Content/shoot_sheet2.xml', null);
 			this.load.atlasXML('wallEffects', 'Content/wallEffects_sheet.png', 'Content/wallEffects_sheet.xml', null);
@@ -40,6 +40,7 @@ module MegaManX
 			this.load.audio('shotCharge_Loop', 'Content/Sounds/MMX02A - Charge Loop.wav');
 			this.load.audio('shot_Medium', 'Content/Sounds/MMX03 - Charged Shot Small.wav');
 			this.load.audio('shot_Large', 'Content/Sounds/MMX04 - Charged Shot Big.wav');
+			this.load.audio('player_hit', 'Content/Sounds/MMX08 - Hit.wav');
 			this.load.audio('sfx', 'Content/Sounds/mmx_sfx.mp3');
 			//this.load.audiosprite('shoot', 'Content/Sounds/mmx_sfx.mp3', 'Content/Sounds/sounds.json');
 

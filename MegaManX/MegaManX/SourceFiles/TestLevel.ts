@@ -47,7 +47,7 @@ module MegaManX
             this.slope.angle = -15;
 
 			this.player = new MegaManX.Player(this.game, 64, 0);
-			this.bunnySpawner = new EnemySpawner<Bunny>(this.game, 128, 332, Bunny);
+			this.bunnySpawner = new EnemySpawner<Bunny>(this.game, 168, 332, Bunny);
 			//this.bunny = new Bunny(this.game, 128, 332);
 
             this.game.camera.follow(this.player);
